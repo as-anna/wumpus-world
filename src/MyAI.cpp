@@ -43,6 +43,9 @@ Agent::Action MyAI::getAction
 	// YOUR CODE BEGINS
 	// ======================================================================
 	
+	if ( glitter )
+		return GRAB;
+	
 	return CLIMB;
 	// ======================================================================
 	// YOUR CODE ENDS
