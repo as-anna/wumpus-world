@@ -45,6 +45,7 @@ Agent::Action MyAI::getAction
 	
 	if ( glitter )
 		return GRAB;
+		// test
 	
 	return CLIMB;
 	// ======================================================================
