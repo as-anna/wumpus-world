@@ -42,6 +42,7 @@ Agent::Action MyAI::getAction
 	// ======================================================================
 	// YOUR CODE BEGINS
 	// ======================================================================
+
 	if (breeze || stench)	// Test how AI does without this line
 		return CLIMB;
 
