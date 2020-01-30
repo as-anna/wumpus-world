@@ -40,11 +40,11 @@ public:
 	// YOUR CODE BEGINS
 	// ======================================================================
 private:
+	enum Status { UNMARKED, SAFE, PIT, WUMPUS, POSSIBLE_DANGER };
 	struct World {
 		struct Tile {
-			// Possible status: unamarked, safe, pit, wumpus, possible_danger
-			std::string status;
-			Tile(): status("unmarked") {};
+			Status status;
+			Tile(): status(UNMARKED) {};
 		};
 		Tile tiles[7][7];
 	};
