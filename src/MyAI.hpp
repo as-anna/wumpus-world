@@ -63,7 +63,7 @@ private:
 	int backtrack;
 	stack <Tile> prev;
 	stack <Tile> future;
-	pair curr_position;
+	pair <int, int> curr_position;
 	Direction direction = EAST;
 
 	// ======================================================================
