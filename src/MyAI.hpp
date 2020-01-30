@@ -22,6 +22,14 @@
 
 #include "Agent.hpp"
 
+// *  stuff we added ourselves
+#include <iostream>
+#include <stack>
+#include <utility>
+
+using namespace std;
+// *
+
 class MyAI : public Agent
 {
 public:
@@ -41,18 +49,21 @@ public:
 	// ======================================================================
 private:
 	enum Status { UNMARKED, SAFE, PIT, WUMPUS, POSSIBLE_DANGER };
+	enum Direction { NORTH, SOUTH, EAST, WEST };
+
 	struct World {
 		struct Tile {
 			Status status;
 			Tile(): status(UNMARKED) {};
 		};
 		Tile tiles[7][7];
-	};
+	} world;
+
 	int backtrack;
 	stack prev;
 	stack future;
 	pair <int, int> curr_position;
-
+	Direction direction = EAST;
 
 	// ======================================================================
 	// YOUR CODE ENDS
