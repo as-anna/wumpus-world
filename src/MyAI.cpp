@@ -45,7 +45,7 @@ Agent::Action MyAI::getAction
 
 	world.tiles[curr_position.first][curr_position.second].status = SAFE;
 	
-	if (breeze || stench)	// Test how AI does without this line
+	if (curr_position.first == 0 & curr_position.second == 0 & (breeze || stench))	// Test how AI does without this line
 		return CLIMB;
 
 	if ( glitter )
