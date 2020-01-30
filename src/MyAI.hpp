@@ -48,6 +48,11 @@ private:
 		};
 		Tile tiles[7][7];
 	};
+	int backtrack;
+	stack prev;
+	stack future;
+	pair <int, int> curr_position;
+
 
 	// ======================================================================
 	// YOUR CODE ENDS
