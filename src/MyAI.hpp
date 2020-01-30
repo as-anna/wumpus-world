@@ -55,7 +55,7 @@ private:
 		Status status;
 		Tile(): status(UNMARKED) {};
 	};
-	
+
 	struct World {
 		Tile tiles[7][7];
 	} world;
@@ -63,7 +63,7 @@ private:
 	int backtrack;
 	stack <Tile> prev;
 	stack <Tile> future;
-	pair <int, int> curr_position(0, 0);
+	pair curr_position;
 	Direction direction = EAST;
 
 	// ======================================================================

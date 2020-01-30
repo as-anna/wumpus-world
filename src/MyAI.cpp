@@ -43,6 +43,8 @@ Agent::Action MyAI::getAction
 	// YOUR CODE BEGINS
 	// ======================================================================
 
+	world.tiles[curr_position.first][curr_position.second].status = SAFE;
+	
 	if (breeze || stench)	// Test how AI does without this line
 		return CLIMB;
 
