@@ -60,6 +60,7 @@ private:
 		Tile tiles[7][7];
 	} world;
 
+	int tile_max = 7;
 	int backtrack;
 	stack <Tile> prev;
 	stack <Tile> future;

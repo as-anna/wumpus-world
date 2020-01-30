@@ -48,6 +48,17 @@ Agent::Action MyAI::getAction
 	if (curr_position.first == 0 & curr_position.second == 0 & (breeze || stench))	// Test how AI does without this line
 		return CLIMB;
 
+	if (!stench && !breeze) {
+		if (curr_position.first > 0)
+			world.tiles[curr_position.first-1][curr_position.second] = SAFE;
+		if (curr_position.first < tile_max)
+			world.tiles[curr_position.first+1][curr_position.second] = SAFE;
+		if (curr_position.second > 0)
+			world.tiles[curr_position.first][curr_position.second-1] = SAFE;
+		if (curr_position.first < tile_max)
+			world.tiles[curr_position.first][curr_position.second+1] = SAFE;
+	}
+	
 	if ( glitter )
 		return GRAB;
 		// test
