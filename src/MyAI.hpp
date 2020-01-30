@@ -51,11 +51,12 @@ private:
 	enum Status { UNMARKED, SAFE, PIT, WUMPUS, POSSIBLE_DANGER };
 	enum Direction { NORTH, SOUTH, EAST, WEST };
 
+	struct Tile {
+		Status status;
+		Tile(): status(UNMARKED) {};
+	};
+	
 	struct World {
-		struct Tile {
-			Status status;
-			Tile(): status(UNMARKED) {};
-		};
 		Tile tiles[7][7];
 	} world;
 
