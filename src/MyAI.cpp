@@ -43,11 +43,14 @@ Agent::Action MyAI::getAction
 	// YOUR CODE BEGINS
 	// ======================================================================
 
+	// Mark current tile safe
 	world.tiles[curr_position.first][curr_position.second].status = SAFE;
 	
+	// Probability that will fall into a pit right away at spawn if breeze too high so climb
 	if (curr_position.first == 0 & curr_position.second == 0 & (breeze || stench))	// Test how AI does without this line
 		return CLIMB;
 
+	// If tile no breeze/stench, adjacent tiles are safe
 	if (!stench && !breeze) {
 		if (curr_position.first > 0)
 			world.tiles[curr_position.first-1][curr_position.second] = SAFE;
@@ -61,7 +64,6 @@ Agent::Action MyAI::getAction
 	
 	if ( glitter )
 		return GRAB;
-		// test
 	
 	return CLIMB;
 	// ======================================================================

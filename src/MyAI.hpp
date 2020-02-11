@@ -66,6 +66,7 @@ private:
 	stack <Tile> future;
 	pair <int, int> curr_position;
 	Direction direction = EAST;
+	Direction desired_dir;
 
 	// ======================================================================
 	// YOUR CODE ENDS
