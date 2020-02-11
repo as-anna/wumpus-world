@@ -53,14 +53,97 @@ Agent::Action MyAI::getAction
 	// If tile no breeze/stench, adjacent tiles are safe
 	if (!stench && !breeze) {
 		if (curr_position.first > 0)
-			world.tiles[curr_position.first-1][curr_position.second] = SAFE;
+			world.tiles[curr_position.first-1][curr_position.second].status[0] = SAFE;
 		if (curr_position.first < tile_max)
-			world.tiles[curr_position.first+1][curr_position.second] = SAFE;
+			world.tiles[curr_position.first+1][curr_position.second].status[0] = SAFE;
 		if (curr_position.second > 0)
-			world.tiles[curr_position.first][curr_position.second-1] = SAFE;
+			world.tiles[curr_position.first][curr_position.second-1].status[0] = SAFE;
 		if (curr_position.first < tile_max)
-			world.tiles[curr_position.first][curr_position.second+1] = SAFE;
+			world.tiles[curr_position.first][curr_position.second+1].status[0] = SAFE;
 	}
+
+	else if (stench || breeze) {
+		if (stench) {
+			if (curr_position.first > 0 && world.tiles[curr_position.first-1][curr_position.second].status[0] == UNMARKED)
+			{
+				world.tiles[curr_position.first-1][curr_position.second].status[1] == P_WUMPUS;
+				world.tiles[curr_position.first-1][curr_position.second].status[0] == NULL;
+			} 
+			if (curr_position.first < tile_max && world.tiles[curr_position.first+1][curr_position.second].status[0] == UNMARKED)
+			{
+				world.tiles[curr_position.first+1][curr_position.second].status[1] == P_WUMPUS;
+				world.tiles[curr_position.first+1][curr_position.second].status[0] == NULL;
+			}
+			if (curr_position.second > 0 && world.tiles[curr_position.first][curr_position.second-1].status[0] == UNMARKED)
+			{
+				world.tiles[curr_position.first][curr_position.second-1].status[1] == P_WUMPUS;
+				world.tiles[curr_position.first][curr_position.second-1].status[0] == NULL;
+			}
+			if (curr_position.first < tile_max && world.tiles[curr_position.first][curr_position.second+1].status[0] == UNMARKED)
+			{
+				world.tiles[curr_position.first][curr_position.second+1].status[1] == P_WUMPUS;
+				world.tiles[curr_position.first][curr_position.second+1].status[0] == NULL;
+			}
+		}
+		if (breeze) {
+			if (curr_position.first > 0 && world.tiles[curr_position.first-1][curr_position.second].status[0] == UNMARKED)
+			{
+				world.tiles[curr_position.first-1][curr_position.second].status[0] == P_PIT;
+			} 
+			if (curr_position.first < tile_max && world.tiles[curr_position.first+1][curr_position.second].status[0] == UNMARKED)
+			{
+				world.tiles[curr_position.first+1][curr_position.second].status[0] == P_PIT;
+			}
+			if (curr_position.second > 0 && world.tiles[curr_position.first][curr_position.second-1].status[0] == UNMARKED)
+			{
+				world.tiles[curr_position.first][curr_position.second-1].status[0] == P_PIT;
+			}
+			if (curr_position.first < tile_max && world.tiles[curr_position.first][curr_position.second+1].status[0] == UNMARKED)
+			{
+				world.tiles[curr_position.first][curr_position.second+1].status[0] == P_PIT;
+			}
+		}
+	}
+
+	else if (!stench || !breeze) {
+		if (!stench) {
+			if (curr_position.first > 0)
+			{
+				world.tiles[curr_position.first-1][curr_position.second].status[1] == NULL;
+			} 
+			if (curr_position.first < tile_max)
+			{
+				world.tiles[curr_position.first+1][curr_position.second].status[1] == NULL;
+			}
+			if (curr_position.second > 0)
+			{
+				world.tiles[curr_position.first][curr_position.second-1].status[1] == NULL;
+			}
+			if (curr_position.first < tile_max)
+			{
+				world.tiles[curr_position.first][curr_position.second+1].status[1] == NULL;
+			}
+		}
+		if (!breeze) {
+			if (curr_position.first > 0)
+			{
+				world.tiles[curr_position.first-1][curr_position.second].status[0] == NULL;
+			} 
+			if (curr_position.first < tile_max)
+			{
+				world.tiles[curr_position.first+1][curr_position.second].status[0] == NULL;
+			}
+			if (curr_position.second > 0)
+			{
+				world.tiles[curr_position.first][curr_position.second-1].status[0] == NULL;
+			}
+			if (curr_position.first < tile_max)
+			{
+				world.tiles[curr_position.first][curr_position.second+1].status[0] == NULL;
+			}
+		}
+	}
+
 	
 	if ( glitter )
 		return GRAB;

@@ -48,12 +48,12 @@ public:
 	// YOUR CODE BEGINS
 	// ======================================================================
 private:
-	enum Status { UNMARKED, SAFE, PIT, WUMPUS, POSSIBLE_DANGER };
+	enum Status { UNMARKED, SAFE, PIT, WUMPUS, P_PIT, P_WUMPUS };
 	enum Direction { NORTH, SOUTH, EAST, WEST };
 
 	struct Tile {
-		Status status;
-		Tile(): status(UNMARKED) {};
+		Status status[2];
+		Tile(): status(UNMARKED, UNMARKED) {};	// status[1] always possible wumpus or wumpus
 	};
 
 	struct World {
