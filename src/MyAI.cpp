@@ -52,95 +52,24 @@ Agent::Action MyAI::getAction
 
 	// If tile no breeze/stench, adjacent tiles are safe
 	if (!stench && !breeze) {
-		if (curr_position.first > 0)
-			world.tiles[curr_position.first-1][curr_position.second].status[0] = SAFE;
-		if (curr_position.first < tile_max)
-			world.tiles[curr_position.first+1][curr_position.second].status[0] = SAFE;
-		if (curr_position.second > 0)
-			world.tiles[curr_position.first][curr_position.second-1].status[0] = SAFE;
-		if (curr_position.first < tile_max)
-			world.tiles[curr_position.first][curr_position.second+1].status[0] = SAFE;
+		mark_safe();
 	}
 
 	else if (stench || breeze) {
 		if (stench) {
-			if (curr_position.first > 0 && world.tiles[curr_position.first-1][curr_position.second].status[0] == UNMARKED)
-			{
-				world.tiles[curr_position.first-1][curr_position.second].status[1] == P_WUMPUS;
-				world.tiles[curr_position.first-1][curr_position.second].status[0] == NULL;
-			} 
-			if (curr_position.first < tile_max && world.tiles[curr_position.first+1][curr_position.second].status[0] == UNMARKED)
-			{
-				world.tiles[curr_position.first+1][curr_position.second].status[1] == P_WUMPUS;
-				world.tiles[curr_position.first+1][curr_position.second].status[0] == NULL;
-			}
-			if (curr_position.second > 0 && world.tiles[curr_position.first][curr_position.second-1].status[0] == UNMARKED)
-			{
-				world.tiles[curr_position.first][curr_position.second-1].status[1] == P_WUMPUS;
-				world.tiles[curr_position.first][curr_position.second-1].status[0] == NULL;
-			}
-			if (curr_position.first < tile_max && world.tiles[curr_position.first][curr_position.second+1].status[0] == UNMARKED)
-			{
-				world.tiles[curr_position.first][curr_position.second+1].status[1] == P_WUMPUS;
-				world.tiles[curr_position.first][curr_position.second+1].status[0] == NULL;
-			}
+			mark_p_wumpus();
 		}
 		if (breeze) {
-			if (curr_position.first > 0 && world.tiles[curr_position.first-1][curr_position.second].status[0] == UNMARKED)
-			{
-				world.tiles[curr_position.first-1][curr_position.second].status[0] == P_PIT;
-			} 
-			if (curr_position.first < tile_max && world.tiles[curr_position.first+1][curr_position.second].status[0] == UNMARKED)
-			{
-				world.tiles[curr_position.first+1][curr_position.second].status[0] == P_PIT;
-			}
-			if (curr_position.second > 0 && world.tiles[curr_position.first][curr_position.second-1].status[0] == UNMARKED)
-			{
-				world.tiles[curr_position.first][curr_position.second-1].status[0] == P_PIT;
-			}
-			if (curr_position.first < tile_max && world.tiles[curr_position.first][curr_position.second+1].status[0] == UNMARKED)
-			{
-				world.tiles[curr_position.first][curr_position.second+1].status[0] == P_PIT;
-			}
+			mark_p_pit();
 		}
 	}
 
 	else if (!stench || !breeze) {
 		if (!stench) {
-			if (curr_position.first > 0)
-			{
-				world.tiles[curr_position.first-1][curr_position.second].status[1] == NULL;
-			} 
-			if (curr_position.first < tile_max)
-			{
-				world.tiles[curr_position.first+1][curr_position.second].status[1] == NULL;
-			}
-			if (curr_position.second > 0)
-			{
-				world.tiles[curr_position.first][curr_position.second-1].status[1] == NULL;
-			}
-			if (curr_position.first < tile_max)
-			{
-				world.tiles[curr_position.first][curr_position.second+1].status[1] == NULL;
-			}
+			remove_p_wumpus();
 		}
 		if (!breeze) {
-			if (curr_position.first > 0)
-			{
-				world.tiles[curr_position.first-1][curr_position.second].status[0] == NULL;
-			} 
-			if (curr_position.first < tile_max)
-			{
-				world.tiles[curr_position.first+1][curr_position.second].status[0] == NULL;
-			}
-			if (curr_position.second > 0)
-			{
-				world.tiles[curr_position.first][curr_position.second-1].status[0] == NULL;
-			}
-			if (curr_position.first < tile_max)
-			{
-				world.tiles[curr_position.first][curr_position.second+1].status[0] == NULL;
-			}
+			remove_p_pit();
 		}
 	}
 
@@ -157,7 +86,96 @@ Agent::Action MyAI::getAction
 // ======================================================================
 // YOUR CODE BEGINS
 // ======================================================================
+void MyAI::mark_safe() {
+	if (curr_position.first > 0)
+		world.tiles[curr_position.first-1][curr_position.second].status[0] = SAFE;
+	if (curr_position.first < tile_max)
+		world.tiles[curr_position.first+1][curr_position.second].status[0] = SAFE;
+	if (curr_position.second > 0)
+		world.tiles[curr_position.first][curr_position.second-1].status[0] = SAFE;
+	if (curr_position.first < tile_max)
+		world.tiles[curr_position.first][curr_position.second+1].status[0] = SAFE;
+}
 
+void MyAI::mark_p_wumpus() {
+	if (curr_position.first > 0 && world.tiles[curr_position.first-1][curr_position.second].status[0] == UNMARKED)
+	{
+		world.tiles[curr_position.first-1][curr_position.second].status[1] == P_WUMPUS;
+		world.tiles[curr_position.first-1][curr_position.second].status[0] == NULL;
+	} 
+	if (curr_position.first < tile_max && world.tiles[curr_position.first+1][curr_position.second].status[0] == UNMARKED)
+	{
+		world.tiles[curr_position.first+1][curr_position.second].status[1] == P_WUMPUS;
+		world.tiles[curr_position.first+1][curr_position.second].status[0] == NULL;
+	}
+	if (curr_position.second > 0 && world.tiles[curr_position.first][curr_position.second-1].status[0] == UNMARKED)
+	{
+		world.tiles[curr_position.first][curr_position.second-1].status[1] == P_WUMPUS;
+		world.tiles[curr_position.first][curr_position.second-1].status[0] == NULL;
+	}
+	if (curr_position.first < tile_max && world.tiles[curr_position.first][curr_position.second+1].status[0] == UNMARKED)
+	{
+		world.tiles[curr_position.first][curr_position.second+1].status[1] == P_WUMPUS;
+		world.tiles[curr_position.first][curr_position.second+1].status[0] == NULL;
+	}
+}
+
+void MyAI::mark_p_pit() {
+	if (curr_position.first > 0 && world.tiles[curr_position.first-1][curr_position.second].status[0] == UNMARKED)
+	{
+		world.tiles[curr_position.first-1][curr_position.second].status[0] == P_PIT;
+	} 
+	if (curr_position.first < tile_max && world.tiles[curr_position.first+1][curr_position.second].status[0] == UNMARKED)
+	{
+		world.tiles[curr_position.first+1][curr_position.second].status[0] == P_PIT;
+	}
+	if (curr_position.second > 0 && world.tiles[curr_position.first][curr_position.second-1].status[0] == UNMARKED)
+	{
+		world.tiles[curr_position.first][curr_position.second-1].status[0] == P_PIT;
+	}
+	if (curr_position.first < tile_max && world.tiles[curr_position.first][curr_position.second+1].status[0] == UNMARKED)
+	{
+		world.tiles[curr_position.first][curr_position.second+1].status[0] == P_PIT;
+	}
+}
+
+void MyAI::remove_p_wumpus() {
+	if (curr_position.first > 0)
+	{
+		world.tiles[curr_position.first-1][curr_position.second].status[1] == NULL;
+	} 
+	if (curr_position.first < tile_max)
+	{
+		world.tiles[curr_position.first+1][curr_position.second].status[1] == NULL;
+	}
+	if (curr_position.second > 0)
+	{
+		world.tiles[curr_position.first][curr_position.second-1].status[1] == NULL;
+	}
+	if (curr_position.first < tile_max)
+	{
+		world.tiles[curr_position.first][curr_position.second+1].status[1] == NULL;
+	}
+}
+
+void MyAI::remove_p_pit() {
+	if (curr_position.first > 0)
+	{
+		world.tiles[curr_position.first-1][curr_position.second].status[0] == NULL;
+	} 
+	if (curr_position.first < tile_max)
+	{
+		world.tiles[curr_position.first+1][curr_position.second].status[0] == NULL;
+	}
+	if (curr_position.second > 0)
+	{
+		world.tiles[curr_position.first][curr_position.second-1].status[0] == NULL;
+	}
+	if (curr_position.first < tile_max)
+	{
+		world.tiles[curr_position.first][curr_position.second+1].status[0] == NULL;
+	}
+}
 
 // ======================================================================
 // YOUR CODE ENDS
