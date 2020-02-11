@@ -50,7 +50,7 @@ public:
 	// YOUR CODE BEGINS
 	// ======================================================================
 private:
-	enum Status { UNMARKED, SAFE, PIT, WUMPUS, P_PIT, P_WUMPUS };
+	enum Status { UNMARKED, SAFE, PIT, WUMPUS, P_PIT, P_WUMPUS, MARKED };
 	enum Direction { NORTH, SOUTH, EAST, WEST };
 
 	struct Tile {

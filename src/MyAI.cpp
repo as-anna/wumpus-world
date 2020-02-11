@@ -44,7 +44,7 @@ Agent::Action MyAI::getAction
 	// ======================================================================
 
 	// Mark current tile safe
-	world.tiles[curr_position.first][curr_position.second].status = SAFE;
+	world.tiles[curr_position.first][curr_position.second].status[0] = SAFE;
 	
 	// Probability that will fall into a pit right away at spawn if breeze too high so climb
 	if (curr_position.first == 0 & curr_position.second == 0 & (breeze || stench))	// Test how AI does without this line
@@ -73,6 +73,8 @@ Agent::Action MyAI::getAction
 		}
 	}
 
+	scan();
+
 	
 	if ( glitter )
 		return GRAB;
@@ -100,81 +102,81 @@ void MyAI::mark_safe() {
 void MyAI::mark_p_wumpus() {
 	if (curr_position.first > 0 && world.tiles[curr_position.first-1][curr_position.second].status[0] == UNMARKED)
 	{
-		world.tiles[curr_position.first-1][curr_position.second].status[1] == P_WUMPUS;
-		world.tiles[curr_position.first-1][curr_position.second].status[0] == NULL;
+		world.tiles[curr_position.first-1][curr_position.second].status[1] = P_WUMPUS;
+		world.tiles[curr_position.first-1][curr_position.second].status[0] = MARKED;
 	} 
 	if (curr_position.first < MAX_DIMENSION && world.tiles[curr_position.first+1][curr_position.second].status[0] == UNMARKED)
 	{
-		world.tiles[curr_position.first+1][curr_position.second].status[1] == P_WUMPUS;
-		world.tiles[curr_position.first+1][curr_position.second].status[0] == NULL;
+		world.tiles[curr_position.first+1][curr_position.second].status[1] = P_WUMPUS;
+		world.tiles[curr_position.first+1][curr_position.second].status[0] = MARKED;
 	}
 	if (curr_position.second > 0 && world.tiles[curr_position.first][curr_position.second-1].status[0] == UNMARKED)
 	{
-		world.tiles[curr_position.first][curr_position.second-1].status[1] == P_WUMPUS;
-		world.tiles[curr_position.first][curr_position.second-1].status[0] == NULL;
+		world.tiles[curr_position.first][curr_position.second-1].status[1] = P_WUMPUS;
+		world.tiles[curr_position.first][curr_position.second-1].status[0] = MARKED;
 	}
 	if (curr_position.first < MAX_DIMENSION && world.tiles[curr_position.first][curr_position.second+1].status[0] == UNMARKED)
 	{
-		world.tiles[curr_position.first][curr_position.second+1].status[1] == P_WUMPUS;
-		world.tiles[curr_position.first][curr_position.second+1].status[0] == NULL;
+		world.tiles[curr_position.first][curr_position.second+1].status[1] = P_WUMPUS;
+		world.tiles[curr_position.first][curr_position.second+1].status[0] = MARKED;
 	}
 }
 
 void MyAI::mark_p_pit() {
 	if (curr_position.first > 0 && world.tiles[curr_position.first-1][curr_position.second].status[0] == UNMARKED)
 	{
-		world.tiles[curr_position.first-1][curr_position.second].status[0] == P_PIT;
+		world.tiles[curr_position.first-1][curr_position.second].status[0] = P_PIT;
 	} 
 	if (curr_position.first < MAX_DIMENSION && world.tiles[curr_position.first+1][curr_position.second].status[0] == UNMARKED)
 	{
-		world.tiles[curr_position.first+1][curr_position.second].status[0] == P_PIT;
+		world.tiles[curr_position.first+1][curr_position.second].status[0] = P_PIT;
 	}
 	if (curr_position.second > 0 && world.tiles[curr_position.first][curr_position.second-1].status[0] == UNMARKED)
 	{
-		world.tiles[curr_position.first][curr_position.second-1].status[0] == P_PIT;
+		world.tiles[curr_position.first][curr_position.second-1].status[0] = P_PIT;
 	}
 	if (curr_position.first < MAX_DIMENSION && world.tiles[curr_position.first][curr_position.second+1].status[0] == UNMARKED)
 	{
-		world.tiles[curr_position.first][curr_position.second+1].status[0] == P_PIT;
+		world.tiles[curr_position.first][curr_position.second+1].status[0] = P_PIT;
 	}
-	breeze_arr.
+	// breeze_arr.
 }
 
 void MyAI::remove_p_wumpus() {
 	if (curr_position.first > 0)
 	{
-		world.tiles[curr_position.first-1][curr_position.second].status[1] == NULL;
+		world.tiles[curr_position.first-1][curr_position.second].status[1] = MARKED;
 	} 
 	if (curr_position.first < MAX_DIMENSION)
 	{
-		world.tiles[curr_position.first+1][curr_position.second].status[1] == NULL;
+		world.tiles[curr_position.first+1][curr_position.second].status[1] = MARKED;
 	}
 	if (curr_position.second > 0)
 	{
-		world.tiles[curr_position.first][curr_position.second-1].status[1] == NULL;
+		world.tiles[curr_position.first][curr_position.second-1].status[1] = MARKED;
 	}
 	if (curr_position.first < MAX_DIMENSION)
 	{
-		world.tiles[curr_position.first][curr_position.second+1].status[1] == NULL;
+		world.tiles[curr_position.first][curr_position.second+1].status[1] = MARKED;
 	}
 }
 
 void MyAI::remove_p_pit() {
 	if (curr_position.first > 0)
 	{
-		world.tiles[curr_position.first-1][curr_position.second].status[0] == NULL;
+		world.tiles[curr_position.first-1][curr_position.second].status[0] = MARKED;
 	} 
 	if (curr_position.first < MAX_DIMENSION)
 	{
-		world.tiles[curr_position.first+1][curr_position.second].status[0] == NULL;
+		world.tiles[curr_position.first+1][curr_position.second].status[0] = MARKED;
 	}
 	if (curr_position.second > 0)
 	{
-		world.tiles[curr_position.first][curr_position.second-1].status[0] == NULL;
+		world.tiles[curr_position.first][curr_position.second-1].status[0] = MARKED;
 	}
 	if (curr_position.first < MAX_DIMENSION)
 	{
-		world.tiles[curr_position.first][curr_position.second+1].status[0] == NULL;
+		world.tiles[curr_position.first][curr_position.second+1].status[0] = MARKED;
 	}
 }
 
@@ -183,7 +185,7 @@ void MyAI::scan() {
 	pair <int, int> p_wumpus_coords;
 	for (int x = 0; x < MAX_DIMENSION; x++) {
 		for (int y = 0; y < MAX_DIMENSION; y++)	{
-			if (world.tiles[x][y].status[0] == NULL && world.tiles[x][y].status[1] == NULL) {
+			if (world.tiles[x][y].status[0] == MARKED && world.tiles[x][y].status[1] == MARKED) {
 				world.tiles[x][y].status[0] = SAFE;
 			}
 			if (world.tiles[x][y].status[1] == P_WUMPUS)
