@@ -89,11 +89,11 @@ Agent::Action MyAI::getAction
 void MyAI::mark_safe() {
 	if (curr_position.first > 0)
 		world.tiles[curr_position.first-1][curr_position.second].status[0] = SAFE;
-	if (curr_position.first < tile_max)
+	if (curr_position.first < MAX_DIMENSION)
 		world.tiles[curr_position.first+1][curr_position.second].status[0] = SAFE;
 	if (curr_position.second > 0)
 		world.tiles[curr_position.first][curr_position.second-1].status[0] = SAFE;
-	if (curr_position.first < tile_max)
+	if (curr_position.first < MAX_DIMENSION)
 		world.tiles[curr_position.first][curr_position.second+1].status[0] = SAFE;
 }
 
@@ -103,7 +103,7 @@ void MyAI::mark_p_wumpus() {
 		world.tiles[curr_position.first-1][curr_position.second].status[1] == P_WUMPUS;
 		world.tiles[curr_position.first-1][curr_position.second].status[0] == NULL;
 	} 
-	if (curr_position.first < tile_max && world.tiles[curr_position.first+1][curr_position.second].status[0] == UNMARKED)
+	if (curr_position.first < MAX_DIMENSION && world.tiles[curr_position.first+1][curr_position.second].status[0] == UNMARKED)
 	{
 		world.tiles[curr_position.first+1][curr_position.second].status[1] == P_WUMPUS;
 		world.tiles[curr_position.first+1][curr_position.second].status[0] == NULL;
@@ -113,7 +113,7 @@ void MyAI::mark_p_wumpus() {
 		world.tiles[curr_position.first][curr_position.second-1].status[1] == P_WUMPUS;
 		world.tiles[curr_position.first][curr_position.second-1].status[0] == NULL;
 	}
-	if (curr_position.first < tile_max && world.tiles[curr_position.first][curr_position.second+1].status[0] == UNMARKED)
+	if (curr_position.first < MAX_DIMENSION && world.tiles[curr_position.first][curr_position.second+1].status[0] == UNMARKED)
 	{
 		world.tiles[curr_position.first][curr_position.second+1].status[1] == P_WUMPUS;
 		world.tiles[curr_position.first][curr_position.second+1].status[0] == NULL;
@@ -125,7 +125,7 @@ void MyAI::mark_p_pit() {
 	{
 		world.tiles[curr_position.first-1][curr_position.second].status[0] == P_PIT;
 	} 
-	if (curr_position.first < tile_max && world.tiles[curr_position.first+1][curr_position.second].status[0] == UNMARKED)
+	if (curr_position.first < MAX_DIMENSION && world.tiles[curr_position.first+1][curr_position.second].status[0] == UNMARKED)
 	{
 		world.tiles[curr_position.first+1][curr_position.second].status[0] == P_PIT;
 	}
@@ -133,10 +133,11 @@ void MyAI::mark_p_pit() {
 	{
 		world.tiles[curr_position.first][curr_position.second-1].status[0] == P_PIT;
 	}
-	if (curr_position.first < tile_max && world.tiles[curr_position.first][curr_position.second+1].status[0] == UNMARKED)
+	if (curr_position.first < MAX_DIMENSION && world.tiles[curr_position.first][curr_position.second+1].status[0] == UNMARKED)
 	{
 		world.tiles[curr_position.first][curr_position.second+1].status[0] == P_PIT;
 	}
+	breeze_arr.
 }
 
 void MyAI::remove_p_wumpus() {
@@ -144,7 +145,7 @@ void MyAI::remove_p_wumpus() {
 	{
 		world.tiles[curr_position.first-1][curr_position.second].status[1] == NULL;
 	} 
-	if (curr_position.first < tile_max)
+	if (curr_position.first < MAX_DIMENSION)
 	{
 		world.tiles[curr_position.first+1][curr_position.second].status[1] == NULL;
 	}
@@ -152,7 +153,7 @@ void MyAI::remove_p_wumpus() {
 	{
 		world.tiles[curr_position.first][curr_position.second-1].status[1] == NULL;
 	}
-	if (curr_position.first < tile_max)
+	if (curr_position.first < MAX_DIMENSION)
 	{
 		world.tiles[curr_position.first][curr_position.second+1].status[1] == NULL;
 	}
@@ -163,7 +164,7 @@ void MyAI::remove_p_pit() {
 	{
 		world.tiles[curr_position.first-1][curr_position.second].status[0] == NULL;
 	} 
-	if (curr_position.first < tile_max)
+	if (curr_position.first < MAX_DIMENSION)
 	{
 		world.tiles[curr_position.first+1][curr_position.second].status[0] == NULL;
 	}
@@ -171,9 +172,30 @@ void MyAI::remove_p_pit() {
 	{
 		world.tiles[curr_position.first][curr_position.second-1].status[0] == NULL;
 	}
-	if (curr_position.first < tile_max)
+	if (curr_position.first < MAX_DIMENSION)
 	{
 		world.tiles[curr_position.first][curr_position.second+1].status[0] == NULL;
+	}
+}
+
+void MyAI::scan() {
+	int pw_count = 0;
+	pair <int, int> p_wumpus_coords;
+	for (int x = 0; x < MAX_DIMENSION; x++) {
+		for (int y = 0; y < MAX_DIMENSION; y++)	{
+			if (world.tiles[x][y].status[0] == NULL && world.tiles[x][y].status[1] == NULL) {
+				world.tiles[x][y].status[0] = SAFE;
+			}
+			if (world.tiles[x][y].status[1] == P_WUMPUS)
+			{
+				pw_count++;
+				p_wumpus_coords = make_pair(x, y);
+			}
+
+		}
+	}
+	if (pw_count == 1) {
+		world.tiles[p_wumpus_coords.first][p_wumpus_coords.second].status[1] = WUMPUS;
 	}
 }
 

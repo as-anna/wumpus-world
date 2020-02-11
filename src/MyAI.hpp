@@ -54,12 +54,11 @@ private:
 	enum Direction { NORTH, SOUTH, EAST, WEST };
 
 	struct Tile {
-		Status status[2];
-		Tile(): status(UNMARKED, UNMARKED) {};	// status[1] always possible wumpus or wumpus
+		Status status[2] = {UNMARKED, UNMARKED}; // status[1] always possible wumpus or wumpus
 	};
 
 	struct World {
-		Tile tiles[7][7];
+		Tile tiles[MAX_DIMENSION][MAX_DIMENSION];
 	} world;
 
 	int backtrack;
@@ -75,6 +74,7 @@ private:
 	void mark_p_pit();
 	void remove_p_wumpus();
 	void remove_p_pit();
+	void scan();
 
 	// ======================================================================
 	// YOUR CODE ENDS
