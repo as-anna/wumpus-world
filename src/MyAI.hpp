@@ -55,6 +55,7 @@ private:
 
 	struct Tile {
 		Status status[2] = {UNMARKED, UNMARKED}; // status[1] always possible wumpus or wumpus
+		bool is_breeze = false;
 	};
 
 	struct World {
@@ -67,7 +68,6 @@ private:
 	pair <int, int> curr_position;
 	Direction direction = EAST;
 	Direction desired_dir;
-	pair <int, int> breeze_arr[MAX_DIMENSION*MAX_DIMENSION];
 
 	void mark_safe();
 	void mark_p_wumpus();

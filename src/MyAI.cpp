@@ -139,7 +139,7 @@ void MyAI::mark_p_pit() {
 	{
 		world.tiles[curr_position.first][curr_position.second+1].status[0] = P_PIT;
 	}
-	// breeze_arr.
+	world.tiles[curr_position.first][curr_position.second].is_breeze = true;
 }
 
 void MyAI::remove_p_wumpus() {
@@ -181,10 +181,38 @@ void MyAI::remove_p_pit() {
 }
 
 void MyAI::scan() {
+
+
 	int pw_count = 0;
+	int pp_count;
 	pair <int, int> p_wumpus_coords;
+	pair <int, int> p_pit_coords;
 	for (int x = 0; x < MAX_DIMENSION; x++) {
 		for (int y = 0; y < MAX_DIMENSION; y++)	{
+
+			if (world.tiles[x][y].is_breeze) {
+				pp_count = 0;
+				if (x > 0) {
+					if (world.tiles[x-1][y].status[0] == P_PIT)
+						pp_count++;
+						p_pit_coords = make_pair(x-1, y);
+				}
+				if (x < MAX_DIMENSION) {
+					if (world.tiles[x+1][y].status[0] == P_PIT)
+						pp_count++;
+						p_pit_coords = make_pair(x+1, y);
+				}
+				if (y > 0) {
+					if (world.tiles[x][y-1].status[0] == P_PIT)
+						pp_count++;
+						p_pit_coords = make_pair(x, y-1);
+				}
+				if (y < MAX_DIMENSION) {
+					if (world.tiles[x][y+1].status[0] == P_PIT)
+						pp_count++;
+						p_pit_coords = make_pair(x, y+1);
+				}
+			}
 			if (world.tiles[x][y].status[0] == MARKED && world.tiles[x][y].status[1] == MARKED) {
 				world.tiles[x][y].status[0] = SAFE;
 			}
@@ -193,8 +221,10 @@ void MyAI::scan() {
 				pw_count++;
 				p_wumpus_coords = make_pair(x, y);
 			}
-
 		}
+	}
+	if (pp_count == 1) {
+		world.tiles[p_pit_coords.first][p_pit_coords.second].status[0] = PIT;
 	}
 	if (pw_count == 1) {
 		world.tiles[p_wumpus_coords.first][p_wumpus_coords.second].status[1] = WUMPUS;
