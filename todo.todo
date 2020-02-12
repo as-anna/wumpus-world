@@ -1,3 +1,5 @@
-My Tasks:
-	- Make an instance of world that the agent will fill in with info as it goes
-	- What strategies to use
+TODO: 
+- work on move functions (turning, moving, anything with moving in general)
+- implement a panic function 
+	> backtracking all the way to beginning and climb if there are no other safe spaces
+      (pit and gold are in same spot)
