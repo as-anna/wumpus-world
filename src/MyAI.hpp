@@ -26,6 +26,7 @@
 #include <iostream>
 #include <stack>
 #include <utility>
+#include <cstdlib>
 
 #define MAX_DIMENSION 7
 
@@ -50,12 +51,17 @@ public:
 	// YOUR CODE BEGINS
 	// ======================================================================
 private:
-	enum Status { UNMARKED, SAFE, PIT, WUMPUS, P_PIT, P_WUMPUS, MARKED };
 	enum Direction { NORTH, SOUTH, EAST, WEST };
 
 	struct Tile {
-		Status status[2] = {UNMARKED, UNMARKED}; // status[1] always possible wumpus or wumpus
+		bool discovered = false;
+		bool safe = false;
+		bool pit = false; 
+		bool wumpus = false;
+		bool p_pit = false;
+		bool p_wumpus = false;
 		bool is_breeze = false;
+		bool visited = false;
 	};
 
 	struct World {
@@ -66,7 +72,7 @@ private:
 	stack <Tile> prev;
 	stack <Tile> future;
 	pair <int, int> curr_position;
-	Direction direction = EAST;
+	Direction curr_dir= EAST;
 	Direction desired_dir = EAST;
 
 	void mark_safe();
@@ -75,6 +81,7 @@ private:
 	void remove_p_wumpus();
 	void remove_p_pit();
 	void scan();
+	pair<int, int> find_closest_tile();
 
 	// ======================================================================
 	// YOUR CODE ENDS
