@@ -54,21 +54,18 @@ Agent::Action MyAI::getAction
 	if (!stench && !breeze) {
 		mark_safe();
 	}
-
-	else if (stench || breeze) {
+	else {
 		if (stench) {
 			mark_p_wumpus();
 		}
+		else if (!stench) {
+			remove_p_wumpus();
+		}
+		
 		if (breeze) {
 			mark_p_pit();
 		}
-	}
-
-	else if (!stench || !breeze) {
-		if (!stench) {
-			remove_p_wumpus();
-		}
-		if (!breeze) {
+		else if (!breeze) {
 			remove_p_pit();
 		}
 	}
