@@ -75,6 +75,7 @@ private:
 	Direction curr_dir= EAST;
 	Direction desired_dir = EAST;
 
+	void mark_discovered();
 	void mark_safe();
 	void mark_p_wumpus();
 	void mark_p_pit();
