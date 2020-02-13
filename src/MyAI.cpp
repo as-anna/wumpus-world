@@ -45,7 +45,7 @@ Agent::Action MyAI::getAction
 
 	// Mark current tile safe
 	world.tiles[curr_position.first][curr_position.second].safe = true;
-	world.tiles[curr_position.first][curr_position.second].visited = true
+	world.tiles[curr_position.first][curr_position.second].visited = true;
 	
 	// Probability that will fall into a pit right away at spawn if breeze too high so climb
 	if (curr_position.first == 0 & curr_position.second == 0 & (breeze || stench))	// Test how AI does without this line
@@ -252,6 +252,23 @@ void MyAI::scan() {
 
 
 pair<int, int> MyAI::find_closest_tile() {
+	int minimum = 100; 
+	pair<int, int> closest_tile; 
+	for (int x = 0; x < MAX_DIMENSION; x++) {
+		for (int y = 0; y < MAX_DIMENSION; y++) {
+			if (world.tiles[x][y].safe && !world.tiles[x][y].visited) { 
+					curr_distance = abs(curr_position.first - x) + abs(curr_position.second - y);
+					if (curr_distance < minimum) {
+						minimum = curr_distance;
+						closest_tile = make_pair(x, y);
+					}
+			}
+		}
+	}
+	return closest_tile;
+}
+
+void MyAI::make_path(pair<int, int> desired_tile) {
 
 }
 // ======================================================================

@@ -82,6 +82,7 @@ private:
 	void remove_p_pit();
 	void scan();
 	pair<int, int> find_closest_tile();
+	void make_path(pair<int, int> desired_tile);
 
 	// ======================================================================
 	// YOUR CODE ENDS
