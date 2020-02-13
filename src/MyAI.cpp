@@ -257,7 +257,7 @@ pair<int, int> MyAI::find_closest_tile() {
 	for (int x = 0; x < MAX_DIMENSION; x++) {
 		for (int y = 0; y < MAX_DIMENSION; y++) {
 			if (world.tiles[x][y].safe && !world.tiles[x][y].visited) { 
-					curr_distance = abs(curr_position.first - x) + abs(curr_position.second - y);
+					int curr_distance = abs(curr_position.first - x) + abs(curr_position.second - y);
 					if (curr_distance < minimum) {
 						minimum = curr_distance;
 						closest_tile = make_pair(x, y);
