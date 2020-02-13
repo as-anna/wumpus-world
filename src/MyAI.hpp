@@ -67,7 +67,7 @@ private:
 	stack <Tile> future;
 	pair <int, int> curr_position;
 	Direction direction = EAST;
-	Direction desired_dir;
+	Direction desired_dir = EAST;
 
 	void mark_safe();
 	void mark_p_wumpus();
