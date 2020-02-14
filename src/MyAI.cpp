@@ -46,6 +46,7 @@ Agent::Action MyAI::getAction
 	// Mark current tile safe
 	world.tiles[curr_position.first][curr_position.second].safe = true;
 	world.tiles[curr_position.first][curr_position.second].visited = true;
+	prev_tiles.push_back(curr_position);
 	
 	// Probability that will fall into a pit right away at spawn if breeze too high so climb
 	if (curr_position.first == 0 & curr_position.second == 0 & (breeze || stench))	// Test how AI does without this line
@@ -269,7 +270,25 @@ pair<int, int> MyAI::find_closest_tile() {
 }
 
 void MyAI::make_path(pair<int, int> desired_tile) {
-
+	for (auto tile = prev_tiles.rbegin(); tile != prev_tiles.rend(); ++tile) {
+		if (*tile.first == desired_tile.first + 1 && *tile.second == desired_tile.second || 
+			*tile.first == desired_tile.first - 1 && *tile.second == desired_tile.second ||
+			*tile.second == desired_tile.second + 1 && *tile.first == desired_tile.first ||
+			*tile.second == desired_tile.second - 1 && *tile.first == desired_tile.first) {
+				desired_path.push_back(*tile);
+				return;
+			}
+		else {
+			// if tile is not found, find() return the end of the vector
+			std::vector<pair<int,int>>::iterator it = find(desired_path.begin(), desired_path.end(), *tile);
+			if (it == desired_path.end()) 
+				desired_path.push_back(*tile);
+			else {
+				int new_size = it - desired_path.begin() + 1;
+				desired_path.resize(new_size);
+			}
+		}
+	}
 }
 // ======================================================================
 // YOUR CODE ENDS

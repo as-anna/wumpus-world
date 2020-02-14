@@ -24,9 +24,10 @@
 
 // *  stuff we added ourselves
 #include <iostream>
-#include <stack>
 #include <utility>
 #include <cstdlib>
+#include <vector>
+#include <algorithm>
 
 #define MAX_DIMENSION 7
 
@@ -69,9 +70,9 @@ private:
 	} world;
 
 	int backtrack;
-	stack <Tile> prev;
-	stack <Tile> future;
-	pair <int, int> curr_position;
+	vector<pair<int,int>> prev_tiles; 
+	vector<pair<int, int>> desired_path;
+	pair<int, int> curr_position;
 	Direction curr_dir= EAST;
 	Direction desired_dir = EAST;
 
