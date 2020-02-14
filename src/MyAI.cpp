@@ -271,10 +271,10 @@ pair<int, int> MyAI::find_closest_tile() {
 
 void MyAI::make_path(pair<int, int> desired_tile) {
 	for (auto tile = prev_tiles.rbegin(); tile != prev_tiles.rend(); ++tile) {
-		if (*tile.first == desired_tile.first + 1 && *tile.second == desired_tile.second || 
-			*tile.first == desired_tile.first - 1 && *tile.second == desired_tile.second ||
-			*tile.second == desired_tile.second + 1 && *tile.first == desired_tile.first ||
-			*tile.second == desired_tile.second - 1 && *tile.first == desired_tile.first) {
+		if ((*tile).first == desired_tile.first + 1 && (*tile).second == desired_tile.second || 
+			(*tile).first == desired_tile.first - 1 && (*tile).second == desired_tile.second ||
+			(*tile).second == desired_tile.second + 1 && (*tile).first == desired_tile.first ||
+			(*tile).second == desired_tile.second - 1 && (*tile).first == desired_tile.first) {
 				desired_path.push_back(*tile);
 				return;
 			}
