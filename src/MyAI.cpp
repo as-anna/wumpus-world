@@ -79,7 +79,7 @@ Agent::Action MyAI::getAction
 		return GRAB;
 
 	if (desired_dir == curr_dir) {
-		return FORWARD;
+		// return FORWARD;
 	}	
 
 	return CLIMB;
