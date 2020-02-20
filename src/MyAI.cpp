@@ -75,8 +75,10 @@ Agent::Action MyAI::getAction
 	scan();
 
 	
-	if ( glitter )
+	if ( glitter ) {
+		has_gold = true;
 		return GRAB;
+	}
 
 	if (desired_dir == curr_dir) {
 		// return FORWARD;

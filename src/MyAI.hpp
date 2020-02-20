@@ -69,6 +69,8 @@ private:
 		Tile tiles[MAX_DIMENSION][MAX_DIMENSION];
 	} world;
 
+	bool has_gold = false;
+	
 	int backtrack;
 	vector<pair<int,int>> prev_tiles; 
 	vector<pair<int, int>> desired_path;
