@@ -78,8 +78,13 @@ Agent::Action MyAI::getAction
 		has_gold = true;
 		return GRAB;
 	}
-
-	make_path(find_closest_tile());
+	if (has_gold) {
+		make_path(make_pair(0,0));
+	} 
+	else {
+		make_path(find_closest_tile());
+	}
+	
 	set_direction();
 	return face_direction();
 
