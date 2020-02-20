@@ -29,7 +29,6 @@
 #include <vector>
 #include <algorithm>
 
-#define MAX_DIMENSION 7
 
 using namespace std;
 // *
@@ -65,8 +64,10 @@ private:
 		bool visited = false;
 	};
 
+	int MAX_X = 7;
+	int MAX_Y = 7;
 	struct World {
-		Tile tiles[MAX_DIMENSION][MAX_DIMENSION];
+		vector<vector<Tile>> tiles(MAX_X, Tile());
 	} world;
 
 	bool has_gold = false;
@@ -95,6 +96,7 @@ private:
 	Agent::Action face_east();
 	Agent::Action face_north();
 	Agent::Action face_south();
+	void print_world();
 	// ======================================================================
 	// YOUR CODE ENDS
 	// ======================================================================
