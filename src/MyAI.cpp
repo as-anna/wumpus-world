@@ -251,7 +251,7 @@ void MyAI::scan() {
 	}
 }
 
-
+// Finds closest safe tile that is yet to be visited
 pair<int, int> MyAI::find_closest_tile() {
 	int minimum = 100; 
 	pair<int, int> closest_tile; 
@@ -269,6 +269,7 @@ pair<int, int> MyAI::find_closest_tile() {
 	return closest_tile;
 }
 
+// Finds path to desired tile from current position
 void MyAI::make_path(pair<int, int> desired_tile) {
 	for (auto tile = prev_tiles.rbegin(); tile != prev_tiles.rend(); ++tile) {
 		if ((*tile).first == desired_tile.first + 1 && (*tile).second == desired_tile.second || 
@@ -288,6 +289,97 @@ void MyAI::make_path(pair<int, int> desired_tile) {
 				desired_path.resize(new_size);
 			}
 		}
+	}
+}
+
+void MyAI::set_direction() {
+	current_tile = desired_path[0];
+	desired_path.erase(desired_path.begin());
+	if (current_tile.first+1 == desired_path[1].first)
+	{
+		desired_dir = EAST;
+	}
+	else if (current_tile.first-1 == desired_path[1].first)
+	{
+		desired_dir = WEST;
+	}
+	else if (current_tile.second+1 == desired_path[1].second)
+	{
+		desired_dir = NORTH;
+	}
+	else if (current_tile.second-1 == desired_path[1].second)
+	{
+		desired_dir = SOUTH;
+	}
+}
+
+void MyAI::face_direction() {
+	switch(desired_dir) {
+		case WEST:
+			face_west();
+			break;
+		case EAST:
+			face_east();
+			break;
+		case SOUTH:
+			face_south();
+			break;
+		case NORTH:
+			face_north();
+			break;
+	}
+}
+
+Agent::Action MyAI::face_west() {
+	switch (curr_dir) {
+		case WEST:
+			return NULL;
+		case EAST:
+			return TURN_LEFT;
+		case SOUTH:
+			return TURN_RIGHT;
+		case NORTH:
+			return TURN_LEFT;
+	}
+
+}
+
+Agent::Action MyAI::face_east() {
+	switch (curr_dir) {
+		case WEST:
+			return TURN_LEFT;
+		case EAST:
+			return NULL;
+		case SOUTH:
+			return TURN_LEFT;
+		case NORTH:
+			return TURN_RIGHT;
+	}
+}
+
+Agent::Action MyAI::face_south() {
+	switch (curr_dir) {
+		case WEST:
+			return TURN_LEFT;
+		case EAST:
+			return TURN_RIGHT;
+		case SOUTH:
+			return NULL;
+		case NORTH:
+			return TURN_LEFT;
+	}
+}
+
+Agent::Action MyAI::face_north() {
+	switch (curr_dir) {
+		case WEST:
+			return TURN_RIGHT;
+		case EAST:
+			return TURN_LEFT;
+		case SOUTH:
+			return TURN_LEFT;
+		case NORTH:
+			return NULL;
 	}
 }
 // ======================================================================

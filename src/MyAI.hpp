@@ -86,6 +86,13 @@ private:
 	pair<int, int> find_closest_tile();
 	void make_path(pair<int, int> desired_tile);
 
+
+	void set_direction();
+	void face_direction();
+	Agent::Action face_west();
+	Agent::Action face_east();
+	Agent::Action face_north();
+	Agent::Action face_south();
 	// ======================================================================
 	// YOUR CODE ENDS
 	// ======================================================================
