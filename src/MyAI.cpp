@@ -74,15 +74,14 @@ Agent::Action MyAI::getAction
 
 	scan();
 
-	
 	if ( glitter ) {
 		has_gold = true;
 		return GRAB;
 	}
 
-	if (desired_dir == curr_dir) {
-		// return FORWARD;
-	}	
+	make_path(find_closest_tile());
+	set_direction();
+	return face_direction();
 
 	return CLIMB;
 	// ======================================================================
@@ -295,44 +294,55 @@ void MyAI::make_path(pair<int, int> desired_tile) {
 }
 
 void MyAI::set_direction() {
-	pair<int, int> current_tile = desired_path[0];
-	desired_path.erase(desired_path.begin());
-	if (current_tile.first+1 == desired_path[1].first)
+	pair<int, int> current_tile;
+	pair<int, int> tile_to_move_to;
+	if (curr_position == desired_path[0]) {
+		current_tile = desired_path[0];
+		desired_path.erase(desired_path.begin());
+		tile_to_move_to = desired_path[1];
+	}
+	else {
+		tile_to_move_to = desired_path[0];
+	}
+	
+	if (current_tile.first+1 == tile_to_move_to[1].first)
 	{
 		desired_dir = EAST;
 	}
-	else if (current_tile.first-1 == desired_path[1].first)
+	else if (current_tile.first-1 == tile_to_move_to[1].first)
 	{
 		desired_dir = WEST;
 	}
-	else if (current_tile.second+1 == desired_path[1].second)
+	else if (current_tile.second+1 == tile_to_move_to[1].second)
 	{
 		desired_dir = NORTH;
 	}
-	else if (current_tile.second-1 == desired_path[1].second)
+	else if (current_tile.second-1 == tile_to_move_to[1].second)
 	{
 		desired_dir = SOUTH;
 	}
 }
 
-void MyAI::face_direction() {
+Agent::Action MyAI::face_direction() {
 	switch(desired_dir) {
 		case WEST:
 			if (curr_dir != WEST)
-				face_west();
+				return face_west();
 			break;
 		case EAST:
 			if (curr_dir != EAST)
-				face_east();
+				return face_east();
 			break;
 		case SOUTH:
 			if (curr_dir != SOUTH)
-				face_south();
+				return face_south();
 			break;
 		case NORTH:
 			if (curr_dir != NORTH)
-				face_north();
+				return face_north();
 			break;
+		default:
+			return FORWARD;
 	}
 }
 
