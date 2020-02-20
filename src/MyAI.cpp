@@ -293,7 +293,7 @@ void MyAI::make_path(pair<int, int> desired_tile) {
 }
 
 void MyAI::set_direction() {
-	current_tile = desired_path[0];
+	pair<int, int> current_tile = desired_path[0];
 	desired_path.erase(desired_path.begin());
 	if (current_tile.first+1 == desired_path[1].first)
 	{
@@ -316,24 +316,26 @@ void MyAI::set_direction() {
 void MyAI::face_direction() {
 	switch(desired_dir) {
 		case WEST:
-			face_west();
+			if (curr_dir != WEST)
+				face_west();
 			break;
 		case EAST:
-			face_east();
+			if (curr_dir != EAST)
+				face_east();
 			break;
 		case SOUTH:
-			face_south();
+			if (curr_dir != SOUTH)
+				face_south();
 			break;
 		case NORTH:
-			face_north();
+			if (curr_dir != NORTH)
+				face_north();
 			break;
 	}
 }
 
 Agent::Action MyAI::face_west() {
 	switch (curr_dir) {
-		case WEST:
-			return NULL;
 		case EAST:
 			return TURN_LEFT;
 		case SOUTH:
@@ -348,8 +350,6 @@ Agent::Action MyAI::face_east() {
 	switch (curr_dir) {
 		case WEST:
 			return TURN_LEFT;
-		case EAST:
-			return NULL;
 		case SOUTH:
 			return TURN_LEFT;
 		case NORTH:
@@ -363,8 +363,6 @@ Agent::Action MyAI::face_south() {
 			return TURN_LEFT;
 		case EAST:
 			return TURN_RIGHT;
-		case SOUTH:
-			return NULL;
 		case NORTH:
 			return TURN_LEFT;
 	}
@@ -378,8 +376,6 @@ Agent::Action MyAI::face_north() {
 			return TURN_LEFT;
 		case SOUTH:
 			return TURN_LEFT;
-		case NORTH:
-			return NULL;
 	}
 }
 // ======================================================================
