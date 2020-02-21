@@ -44,6 +44,7 @@ Agent::Action MyAI::getAction
 	// ======================================================================
 
 	// Mark current tile safe
+	cout << "curr pos " << curr_position.first << curr_position.second << endl;
 	world.tiles[curr_position.first][curr_position.second].safe = true;
 	world.tiles[curr_position.first][curr_position.second].visited = true;
 	prev_tiles.push_back(curr_position);
@@ -63,13 +64,13 @@ Agent::Action MyAI::getAction
 			*/
 		}
 		if (curr_dir == WEST)
-			curr_position.first++;
+			curr_position.first = curr_position.first + 1;
 		else if (curr_dir == EAST)
-			curr_position.first--;
+			curr_position.first = curr_position.first - 1;
 		else if (curr_dir == SOUTH)
-			curr_postion.second++; 
+			curr_position.second = curr_position.second + 1; 
 		else if (curr_dir == NORTH)
-			curr_position.second--;
+			curr_position.second = curr_position.second - 1;
 	}
 	
 	// Probability that will fall into a pit right away at spawn if breeze too high so climb
@@ -346,32 +347,41 @@ void MyAI::set_direction() {
 
 Agent::Action MyAI::face_direction() {
 	switch(desired_dir) {
-		case WEST:
+		case WEST: {
 			if (curr_dir != WEST)
 				return face_west();
 			break;
-		case EAST:
+		}
+		case EAST: {
 			if (curr_dir != EAST)
 				return face_east();
 			break;
-		case SOUTH:
+		}
+		case SOUTH: {
 			if (curr_dir != SOUTH)
 				return face_south();
 			break;
-		case NORTH:
+		}
+		case NORTH: {
 			if (curr_dir != NORTH)
 				return face_north();
 			break;
-		default:
+		}
+		default: {
+			cout << "AAAAAAAAAAAA" << endl;
 			if (curr_dir == WEST)
-				curr_position.first--;
-			else if (curr_dir == EAST)
-				curr_position.first++;
+				curr_position.first = curr_position.first - 1;
+			else if (curr_dir == EAST) {
+				cout << "EAST curr pos " << curr_position.first << curr_position.second << endl;
+				curr_position.first = curr_position.first + 1;
+			}
 			else if (curr_dir == SOUTH)
-				curr_postion.second--;
+				curr_position.second = curr_position.second - 1;
 			else if (curr_dir == NORTH)
-				curr_position.second++;
-			return FORWARD;
+				curr_position.second = curr_position.second + 1;
+			cout << "AFTER curr pos " << curr_position.first << curr_position.second << endl;
+			return SHOOT;
+		}
 	}
 }
 
