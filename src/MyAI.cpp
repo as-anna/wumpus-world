@@ -62,6 +62,14 @@ Agent::Action MyAI::getAction
 			}
 			*/
 		}
+		if (curr_dir == WEST)
+			curr_position.first++;
+		else if (curr_dir == EAST)
+			curr_position.first--;
+		else if (curr_dir == SOUTH)
+			curr_postion.second++; 
+		else if (curr_dir == NORTH)
+			curr_position.second--;
 	}
 	
 	// Probability that will fall into a pit right away at spawn if breeze too high so climb
@@ -355,6 +363,14 @@ Agent::Action MyAI::face_direction() {
 				return face_north();
 			break;
 		default:
+			if (curr_dir == WEST)
+				curr_position.first--;
+			else if (curr_dir == EAST)
+				curr_position.first++;
+			else if (curr_dir == SOUTH)
+				curr_postion.second--;
+			else if (curr_dir == NORTH)
+				curr_position.second++;
 			return FORWARD;
 	}
 }
