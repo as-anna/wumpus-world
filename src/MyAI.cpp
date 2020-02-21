@@ -406,7 +406,7 @@ Agent::Action MyAI::face_north() {
 
 void MyAI::print_world() {
 	for (int x = 0 ; x < MAX_X; ++x) {
-		for (int y = 0; y < MAX_Y; ++y) {
+		for (int y = MAX_Y; y >= 0; --y) {
 			if (world.tiles[x][y].discovered)
 				cout << "D"; 
 			if (world.tiles[x][y].safe) 
