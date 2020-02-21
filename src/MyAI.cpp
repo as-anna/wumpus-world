@@ -51,14 +51,16 @@ Agent::Action MyAI::getAction
 	if (bump) {
 		if (curr_dir == NORTH) {
 			MAX_Y = curr_position.second+1;
-			world.tiles.resize(MAX_Y);
+			// world.tiles.resize(MAX_Y);
 		}
 		else if (curr_dir == EAST) {
 			MAX_X = curr_position.first+1;
+			/*
 			for (int i = 0; i < world.tiles.size; ++i)
 			{
 				world.tiles[i].resize(MAX_X);
 			}
+			*/
 		}
 	}
 	
@@ -316,19 +318,19 @@ void MyAI::set_direction() {
 		tile_to_move_to = desired_path[0];
 	}
 	
-	if (current_tile.first+1 == tile_to_move_to[1].first)
+	if (current_tile.first+1 == tile_to_move_to.first)
 	{
 		desired_dir = EAST;
 	}
-	else if (current_tile.first-1 == tile_to_move_to[1].first)
+	else if (current_tile.first-1 == tile_to_move_to.first)
 	{
 		desired_dir = WEST;
 	}
-	else if (current_tile.second+1 == tile_to_move_to[1].second)
+	else if (current_tile.second+1 == tile_to_move_to.second)
 	{
 		desired_dir = NORTH;
 	}
-	else if (current_tile.second-1 == tile_to_move_to[1].second)
+	else if (current_tile.second-1 == tile_to_move_to.second)
 	{
 		desired_dir = SOUTH;
 	}
