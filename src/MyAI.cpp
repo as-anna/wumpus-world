@@ -353,7 +353,6 @@ Agent::Action MyAI::face_direction() {
 		return face_north();
 
 	else {	// chayanne: i cant believe-
-		cout << "AAAAAAAAAAAA" << endl;
 		if (curr_dir == WEST) {
 			curr_position.first = curr_position.first - 1;
 		}
@@ -418,8 +417,8 @@ Agent::Action MyAI::face_north() {
 }
 
 void MyAI::print_world() {
-	for (int x = MAX_X - 1; x >= 0 ; --x) {
-		for (int y = 0; y < MAX_Y; ++y) {
+	for (int y = MAX_Y - 1; y >= 0 ; --y) {
+		for (int x = 0; x < MAX_X; ++x) {
 			if (world.tiles[x][y].discovered)
 				cout << "D"; 
 			if (world.tiles[x][y].safe) 
