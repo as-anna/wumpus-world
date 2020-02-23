@@ -43,7 +43,7 @@ Agent::Action MyAI::getAction
 	// YOUR CODE BEGINS
 	// ======================================================================
 	// Mark current tile safe
-	cout << "curr pos " << curr_position.first << curr_position.second << endl;
+	cout << "CURR POS X: " << curr_position.first << " Y: " << curr_position.second << endl;
 	world.tiles[curr_position.first][curr_position.second].safe = true;
 	world.tiles[curr_position.first][curr_position.second].visited = true;
 	prev_tiles.push_back(curr_position);
@@ -59,7 +59,7 @@ Agent::Action MyAI::getAction
 				world.tiles[i].resize(MAX_X);
 			}
 		}
-		
+
 		if (curr_dir == WEST)
 			curr_position.first = curr_position.first + 1;
 		else if (curr_dir == EAST)
@@ -106,9 +106,6 @@ Agent::Action MyAI::getAction
 	} 
 	else {
 		make_path(find_closest_tile());
-	}
-	for (auto x : desired_path) {
-		cout << "desired path, X:" << x.first << " Y:" << x.second << endl;
 	}
 	set_direction();
 	return face_direction();
@@ -292,12 +289,13 @@ pair<int, int> MyAI::find_closest_tile() {
 }
 
 // Finds path to desired tile from current position
-void MyAI::make_path(pair<int, int> desired_tile) {
+void MyAI::make_path(pair<int, int> desired_tile) {		//NOTE: it isn't changing desired path??? 
 	for (auto tile = prev_tiles.rbegin(); tile != prev_tiles.rend(); ++tile) {
-		if ((*tile).first == desired_tile.first + 1 && (*tile).second == desired_tile.second || 
-			(*tile).first == desired_tile.first - 1 && (*tile).second == desired_tile.second ||
-			(*tile).second == desired_tile.second + 1 && (*tile).first == desired_tile.first ||
-			(*tile).second == desired_tile.second - 1 && (*tile).first == desired_tile.first) {
+		if (((*tile).first == desired_tile.first + 1 && (*tile).second == desired_tile.second) || 
+			((*tile).first == desired_tile.first - 1 && (*tile).second == desired_tile.second) ||
+			((*tile).second == desired_tile.second + 1 && (*tile).first == desired_tile.first) ||
+			((*tile).second == desired_tile.second - 1 && (*tile).first == desired_tile.first)) {
+				cout << "tile pushed back: " << (*tile).first << (*tile).second << endl; 
 				desired_path.push_back(*tile);
 				return;
 			}
@@ -345,42 +343,32 @@ void MyAI::set_direction() {
 }
 
 Agent::Action MyAI::face_direction() {
-	switch(desired_dir) {
-		case WEST: {
-			if (curr_dir != WEST)
-				return face_west();
-			break;
+	if (desired_dir == WEST && curr_dir != WEST)
+		return face_west();
+	else if (desired_dir == EAST && curr_dir != EAST)
+		return face_east();
+	else if (desired_dir == SOUTH && curr_dir != SOUTH)
+		return face_south();
+	else if (desired_dir == NORTH && curr_dir != NORTH)
+		return face_north();
+
+	else {	// chayanne: i cant believe-
+		cout << "AAAAAAAAAAAA" << endl;
+		if (curr_dir == WEST) {
+			curr_position.first = curr_position.first - 1;
 		}
-		case EAST: {
-			if (curr_dir != EAST)
-				return face_east();
-			break;
+		else if (curr_dir == EAST) {
+			cout << "EAST curr pos " << curr_position.first << curr_position.second << endl;
+			curr_position.first = curr_position.first + 1;
 		}
-		case SOUTH: {
-			if (curr_dir != SOUTH)
-				return face_south();
-			break;
+		else if (curr_dir == SOUTH) {
+			curr_position.second = curr_position.second - 1;
 		}
-		case NORTH: {
-			if (curr_dir != NORTH)
-				return face_north();
-			break;
+		else if (curr_dir == NORTH) {
+			curr_position.second = curr_position.second + 1;
 		}
-		default: {
-			cout << "AAAAAAAAAAAA" << endl;
-			if (curr_dir == WEST)
-				curr_position.first = curr_position.first - 1;
-			else if (curr_dir == EAST) {
-				cout << "EAST curr pos " << curr_position.first << curr_position.second << endl;
-				curr_position.first = curr_position.first + 1;
-			}
-			else if (curr_dir == SOUTH)
-				curr_position.second = curr_position.second - 1;
-			else if (curr_dir == NORTH)
-				curr_position.second = curr_position.second + 1;
-			cout << "AFTER curr pos " << curr_position.first << curr_position.second << endl;
-			return FORWARD;
-		}
+		cout << "AFTER curr pos " << curr_position.first << curr_position.second << endl;
+		return FORWARD;
 	}
 }
 
