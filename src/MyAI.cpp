@@ -108,9 +108,9 @@ Agent::Action MyAI::getAction
 		make_path(find_closest_tile());
 	}
 	set_direction();
+	
 	return face_direction();
 
-	return CLIMB;
 	// ======================================================================
 	// YOUR CODE ENDS
 	// ======================================================================
@@ -295,7 +295,7 @@ void MyAI::make_path(pair<int, int> desired_tile) {		//NOTE: it isn't changing d
 			((*tile).first == desired_tile.first - 1 && (*tile).second == desired_tile.second) ||
 			((*tile).second == desired_tile.second + 1 && (*tile).first == desired_tile.first) ||
 			((*tile).second == desired_tile.second - 1 && (*tile).first == desired_tile.first)) {
-				cout << "tile pushed back: " << (*tile).first << (*tile).second << endl; 
+				cout << "tile pushed back: " << (*tile).first << ", " << (*tile).second << endl; 
 				desired_path.push_back(*tile);
 				return;
 			}
@@ -324,6 +324,8 @@ void MyAI::set_direction() {
 		tile_to_move_to = desired_path[0];
 	}
 	
+	cout << "TILE TO MOVE TO: " << tile_to_move_to.first << ", " << tile_to_move_to.second << endl;
+
 	if (current_tile.first+1 == tile_to_move_to.first)
 	{
 		desired_dir = EAST;
@@ -343,21 +345,24 @@ void MyAI::set_direction() {
 }
 
 Agent::Action MyAI::face_direction() {
+	cout << "prev Desired dir: " << desired_dir << endl;
+	cout << "prev Current dir: " << curr_dir << endl;
+	
+	Agent::Action action;
 	if (desired_dir == WEST && curr_dir != WEST)
-		return face_west();
+		action = face_west();
 	else if (desired_dir == EAST && curr_dir != EAST)
-		return face_east();
+		action = face_east();
 	else if (desired_dir == SOUTH && curr_dir != SOUTH)
-		return face_south();
+		action = face_south();
 	else if (desired_dir == NORTH && curr_dir != NORTH)
-		return face_north();
+		action = face_north();
 
 	else {	// chayanne: i cant believe-
 		if (curr_dir == WEST) {
 			curr_position.first = curr_position.first - 1;
 		}
 		else if (curr_dir == EAST) {
-			cout << "EAST curr pos " << curr_position.first << curr_position.second << endl;
 			curr_position.first = curr_position.first + 1;
 		}
 		else if (curr_dir == SOUTH) {
@@ -367,17 +372,25 @@ Agent::Action MyAI::face_direction() {
 			curr_position.second = curr_position.second + 1;
 		}
 		cout << "AFTER curr pos " << curr_position.first << curr_position.second << endl;
-		return FORWARD;
+		action =  FORWARD;
 	}
+
+	cout << "after Desired dir: " << desired_dir << endl;
+	cout << "after Current dir: " << curr_dir << endl;
+	
+	return action;
 }
 
 Agent::Action MyAI::face_west() {
 	switch (curr_dir) {
 		case EAST:
+			curr_dir = NORTH;
 			return TURN_LEFT;
 		case SOUTH:
+			curr_dir = WEST; 
 			return TURN_RIGHT;
 		case NORTH:
+			curr_dir = WEST;
 			return TURN_LEFT;
 	}
 
@@ -386,10 +399,13 @@ Agent::Action MyAI::face_west() {
 Agent::Action MyAI::face_east() {
 	switch (curr_dir) {
 		case WEST:
+			curr_dir = SOUTH;
 			return TURN_LEFT;
 		case SOUTH:
+			curr_dir = EAST;
 			return TURN_LEFT;
 		case NORTH:
+			curr_dir = EAST;
 			return TURN_RIGHT;
 	}
 }
@@ -397,10 +413,13 @@ Agent::Action MyAI::face_east() {
 Agent::Action MyAI::face_south() {
 	switch (curr_dir) {
 		case WEST:
+			curr_dir = SOUTH;
 			return TURN_LEFT;
 		case EAST:
+			curr_dir = SOUTH;
 			return TURN_RIGHT;
 		case NORTH:
+			curr_dir = WEST;
 			return TURN_LEFT;
 	}
 }
@@ -408,10 +427,13 @@ Agent::Action MyAI::face_south() {
 Agent::Action MyAI::face_north() {
 	switch (curr_dir) {
 		case WEST:
+			curr_dir = NORTH;
 			return TURN_RIGHT;
 		case EAST:
+			curr_dir = NORTH;
 			return TURN_LEFT;
 		case SOUTH:
+			curr_dir = EAST;
 			return TURN_LEFT;
 	}
 }
