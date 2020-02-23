@@ -66,10 +66,9 @@ private:
 
 	int MAX_X = 7;
 	int MAX_Y = 7;
+
 	struct World {
-		// vector<vector<Tile>> tiles(MAX_X, Tile());
-		// vector<vector<Tile>> tiles(7 ,vector<Tile>(7));
-		Tile tiles[7][7];
+		vector<vector<Tile>> tiles = vector<vector<Tile>>(7, vector<Tile>(7));
 	} world;
 
 	bool has_gold = false;
