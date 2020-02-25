@@ -10,3 +10,4 @@ fixed and agent doesn't go in a straight line anymore. Must have to do with MAX_
 - implement a panic function 
 	> backtracking all the way to beginning and climb if there are no other safe spaces
       (pit and gold are in same spot)
+- When you encounter 2 stinks, should be able to tell where Wumpus is for sure

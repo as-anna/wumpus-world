@@ -45,17 +45,17 @@ Agent::Action MyAI::getAction
 	// Mark current tile safe
 	if (bump) {
 		if (curr_dir == NORTH) {
-			MAX_Y = curr_position.second+1;
-			world.tiles.resize(MAX_Y);
 			curr_position.second = curr_position.second - 1;
+			MAX_Y = curr_position.second+1;
+			world.tiles.resize(MAX_Y - 1);
 		}
 		else if (curr_dir == EAST) {
+			curr_position.first = curr_position.first - 1;
 			MAX_X = curr_position.first+1;
 			for (int i = 0; i < MAX_Y; ++i)
 			{
-				world.tiles[i].resize(MAX_X);
+				world.tiles[i].resize(MAX_X - 1);
 			}
-			curr_position.first = curr_position.first - 1;
 		}
 		else if (curr_dir == WEST)
 			curr_position.first = curr_position.first + 1;
@@ -68,7 +68,11 @@ Agent::Action MyAI::getAction
 	world.tiles[curr_position.first][curr_position.second].safe = true;
 	world.tiles[curr_position.first][curr_position.second].visited = true;
 	world.tiles[curr_position.first][curr_position.second].discovered = true;
-	prev_tiles.push_back(curr_position);
+	if (prev_tiles.size() == 0)
+		prev_tiles.push_back(curr_position);
+	else if (prev_tiles.back().first != curr_position.first
+		|| prev_tiles.back().second != curr_position.second)
+		prev_tiles.push_back(curr_position);
 	
 	
 	// Probability that will fall into a pit right away at spawn if breeze too high so climb
@@ -140,26 +144,46 @@ void MyAI::mark_discovered() {
 }
 
 void MyAI::mark_safe() {
-	if (curr_position.first > 0)
-		world.tiles[curr_position.first-1][curr_position.second].safe = true;		
-	if (curr_position.first < MAX_X-1)
+	if (curr_position.first > 0) {
+		world.tiles[curr_position.first-1][curr_position.second].safe = true;
+		world.tiles[curr_position.first-1][curr_position.second].p_pit = false;
+		world.tiles[curr_position.first-1][curr_position.second].p_wumpus = false;
+	}
+	if (curr_position.first < MAX_X-1) {
 		world.tiles[curr_position.first+1][curr_position.second].safe = true;
-	if (curr_position.second > 0)
+		world.tiles[curr_position.first+1][curr_position.second].p_pit = false;
+		world.tiles[curr_position.first+1][curr_position.second].p_wumpus = false;
+	}
+	if (curr_position.second > 0) {
 		world.tiles[curr_position.first][curr_position.second-1].safe = true;
-	if (curr_position.second < MAX_Y-1)
+		world.tiles[curr_position.first][curr_position.second-1].p_pit = false;
+		world.tiles[curr_position.first][curr_position.second-1].p_wumpus = false;
+	}
+	if (curr_position.second < MAX_Y-1) {
 		world.tiles[curr_position.first][curr_position.second+1].safe = true;
+		world.tiles[curr_position.first][curr_position.second+1].p_pit = false;
+		world.tiles[curr_position.first][curr_position.second+1].p_wumpus = false;
+	}
 	mark_discovered();
 }
 
 void MyAI::mark_p_wumpus() {
-	if (curr_position.first > 0 && world.tiles[curr_position.first-1][curr_position.second].discovered == false)
+	if (curr_position.first > 0 && world.tiles[curr_position.first-1][curr_position.second].discovered == false) {
 		world.tiles[curr_position.first-1][curr_position.second].p_wumpus = true;
-	if (curr_position.first < MAX_X-1 && world.tiles[curr_position.first+1][curr_position.second].discovered == false)
+		world.tiles[curr_position.first-1][curr_position.second].safe = false;
+	}
+	if (curr_position.first < MAX_X-1 && world.tiles[curr_position.first+1][curr_position.second].discovered == false) {
 		world.tiles[curr_position.first+1][curr_position.second].p_wumpus = true;
-	if (curr_position.second > 0 && world.tiles[curr_position.first][curr_position.second-1].discovered == false)
+		world.tiles[curr_position.first+1][curr_position.second].safe = false;
+	}
+	if (curr_position.second > 0 && world.tiles[curr_position.first][curr_position.second-1].discovered == false) {
 		world.tiles[curr_position.first][curr_position.second-1].p_wumpus = true;
-	if (curr_position.second < MAX_Y-1 && world.tiles[curr_position.first][curr_position.second+1].discovered == false)
+		world.tiles[curr_position.first][curr_position.second-1].safe = false;
+	}
+	if (curr_position.second < MAX_Y-1 && world.tiles[curr_position.first][curr_position.second+1].discovered == false) {
 		world.tiles[curr_position.first][curr_position.second+1].p_wumpus = true;
+		world.tiles[curr_position.first][curr_position.second+1].safe = false;
+	}
 	mark_discovered();
 }
 
@@ -167,18 +191,22 @@ void MyAI::mark_p_pit() {
 	if (curr_position.first > 0 && world.tiles[curr_position.first-1][curr_position.second].discovered == false)
 	{
 		world.tiles[curr_position.first-1][curr_position.second].p_pit = true;
+		world.tiles[curr_position.first-1][curr_position.second].safe = false;
 	} 
 	if (curr_position.first < MAX_X-1 && world.tiles[curr_position.first+1][curr_position.second].discovered == false)
 	{
 		world.tiles[curr_position.first+1][curr_position.second].p_pit = true;
+		world.tiles[curr_position.first+1][curr_position.second].safe = false;
 	}
 	if (curr_position.second > 0 && world.tiles[curr_position.first][curr_position.second-1].discovered == false)
 	{
 		world.tiles[curr_position.first][curr_position.second-1].p_pit = true;
+		world.tiles[curr_position.first][curr_position.second-1].safe = false;
 	}
 	if (curr_position.second < MAX_Y-1 && world.tiles[curr_position.first][curr_position.second+1].discovered == false)
 	{
 		world.tiles[curr_position.first][curr_position.second+1].p_pit = true;
+		world.tiles[curr_position.first][curr_position.second+1].safe = false;
 	}
 	world.tiles[curr_position.first][curr_position.second].is_breeze = true;
 	mark_discovered();
@@ -265,9 +293,12 @@ void MyAI::scan() {
 	}
 	if (pp_count == 1) {
 		world.tiles[p_pit_coords.first][p_pit_coords.second].pit = true;
+		world.tiles[p_pit_coords.first][p_pit_coords.second].safe = false;
+
 	}
 	if (pw_count == 1) {
 		world.tiles[p_wumpus_coords.first][p_wumpus_coords.second].wumpus = true;
+		world.tiles[p_wumpus_coords.first][p_wumpus_coords.second].safe = false;
 	}
 }
 
@@ -292,11 +323,14 @@ pair<int, int> MyAI::find_closest_tile() {
 		panic = true;
 	}
 
+	cout << "CLOSEST TILE X: " << closest_tile.first << ", Y: " << closest_tile.second << endl;
+
 	return closest_tile;
 }
 
 // Finds path to desired tile from current position
 void MyAI::make_path(pair<int, int> desired_tile) {		//NOTE: it isn't changing desired path??? 
+	desired_path.clear();
 	for (auto tile = prev_tiles.rbegin(); tile != prev_tiles.rend(); ++tile) {
 		if (((*tile).first == desired_tile.first + 1 && (*tile).second == desired_tile.second) || 
 			((*tile).first == desired_tile.first - 1 && (*tile).second == desired_tile.second) ||
@@ -304,7 +338,7 @@ void MyAI::make_path(pair<int, int> desired_tile) {		//NOTE: it isn't changing d
 			((*tile).second == desired_tile.second - 1 && (*tile).first == desired_tile.first)) {
 				cout << "tile pushed back: " << (*tile).first << ", " << (*tile).second << endl; 
 				desired_path.push_back(*tile);
-				return;
+				break;
 			}
 		else {
 			// if tile is not found, find() return the end of the vector
@@ -317,6 +351,8 @@ void MyAI::make_path(pair<int, int> desired_tile) {		//NOTE: it isn't changing d
 			}
 		}
 	}
+
+	desired_path.push_back(desired_tile);
 }
 
 void MyAI::set_direction() {
@@ -325,7 +361,7 @@ void MyAI::set_direction() {
 	if (curr_position == desired_path[0]) {
 		current_tile = desired_path[0];
 		desired_path.erase(desired_path.begin());
-		tile_to_move_to = desired_path[1];
+		tile_to_move_to = desired_path[0];
 	}
 	else {
 		tile_to_move_to = desired_path[0];
@@ -384,6 +420,16 @@ Agent::Action MyAI::face_direction() {
 
 	cout << "after Desired dir: " << desired_dir << endl;
 	cout << "after Current dir: " << curr_dir << endl;
+
+	cout << "PREV_TILES PATH:" << endl;
+	for (auto x: prev_tiles) {
+		cout << "X: " << x.first << ", Y: " << x.second << endl;
+	}
+
+	cout << "DESIRED PATH:" << endl;
+	for (auto x: desired_path) {
+		cout << "X: " << x.first << ", Y: " << x.second << endl;
+	}
 	
 	return action;
 }
