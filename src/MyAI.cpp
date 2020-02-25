@@ -43,14 +43,11 @@ Agent::Action MyAI::getAction
 	// YOUR CODE BEGINS
 	// ======================================================================
 	// Mark current tile safe
-	cout << "CURR POS X: " << curr_position.first << " Y: " << curr_position.second << endl;
-	world.tiles[curr_position.first][curr_position.second].safe = true;
-	world.tiles[curr_position.first][curr_position.second].visited = true;
-	prev_tiles.push_back(curr_position);
 	if (bump) {
 		if (curr_dir == NORTH) {
 			MAX_Y = curr_position.second+1;
 			world.tiles.resize(MAX_Y);
+			curr_position.second = curr_position.second - 1;
 		}
 		else if (curr_dir == EAST) {
 			MAX_X = curr_position.first+1;
@@ -58,17 +55,21 @@ Agent::Action MyAI::getAction
 			{
 				world.tiles[i].resize(MAX_X);
 			}
-		}
-
-		if (curr_dir == WEST)
-			curr_position.first = curr_position.first + 1;
-		else if (curr_dir == EAST)
 			curr_position.first = curr_position.first - 1;
+		}
+		else if (curr_dir == WEST)
+			curr_position.first = curr_position.first + 1;
 		else if (curr_dir == SOUTH)
 			curr_position.second = curr_position.second + 1; 
-		else if (curr_dir == NORTH)
-			curr_position.second = curr_position.second - 1;
+		cout << "CURR POSITION AFTER BUMP X: " << curr_position.first << ", Y: " << curr_position.second<< endl;
 	}
+	
+	cout << "CURR POS X: " << curr_position.first << " Y: " << curr_position.second << endl;
+	world.tiles[curr_position.first][curr_position.second].safe = true;
+	world.tiles[curr_position.first][curr_position.second].visited = true;
+	world.tiles[curr_position.first][curr_position.second].discovered = true;
+	prev_tiles.push_back(curr_position);
+	
 	
 	// Probability that will fall into a pit right away at spawn if breeze too high so climb
 	if (curr_position.first == 0 && curr_position.second == 0 && (breeze || stench || has_gold || panic))	// Test how AI does without this line
