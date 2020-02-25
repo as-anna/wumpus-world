@@ -71,7 +71,7 @@ Agent::Action MyAI::getAction
 	}
 	
 	// Probability that will fall into a pit right away at spawn if breeze too high so climb
-	if (curr_position.first == 0 && curr_position.second == 0 && (breeze || stench))	// Test how AI does without this line
+	if (curr_position.first == 0 && curr_position.second == 0 && (breeze || stench || has_gold))	// Test how AI does without this line
 		return CLIMB;
 
 	// If tile no breeze/stench, adjacent tiles are safe
@@ -273,7 +273,7 @@ void MyAI::scan() {
 // Finds closest safe tile that is yet to be visited
 pair<int, int> MyAI::find_closest_tile() {
 	int minimum = 100; 
-	pair<int, int> closest_tile; 
+	pair<int, int> closest_tile = make_pair(0, 0); 
 	for (int x = 0; x < MAX_X; x++) {
 		for (int y = 0; y < MAX_Y; y++) {
 			if (world.tiles[x][y].safe && !world.tiles[x][y].visited) { 
@@ -285,6 +285,12 @@ pair<int, int> MyAI::find_closest_tile() {
 			}
 		}
 	}
+
+	// If no more non-visited safe tiles, have run out of options so panic
+	if (closest_tile.first == 0 && closest_tile.second == 0) {
+		panic = true;
+	}
+
 	return closest_tile;
 }
 

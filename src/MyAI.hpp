@@ -72,6 +72,7 @@ private:
 	} world;
 
 	bool has_gold = false;
+	bool panic = false;
 	
 	int backtrack;
 	vector<pair<int,int>> prev_tiles; 
@@ -98,6 +99,9 @@ private:
 	Agent::Action face_north();
 	Agent::Action face_south();
 	void print_world();
+
+	// Check if there still exists a safe tile that has yet to be visited
+	bool no_safe_tiles();
 	// ======================================================================
 	// YOUR CODE ENDS
 	// ======================================================================
