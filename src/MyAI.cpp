@@ -71,7 +71,7 @@ Agent::Action MyAI::getAction
 	}
 	
 	// Probability that will fall into a pit right away at spawn if breeze too high so climb
-	if (curr_position.first == 0 && curr_position.second == 0 && (breeze || stench || has_gold))	// Test how AI does without this line
+	if (curr_position.first == 0 && curr_position.second == 0 && (breeze || stench || has_gold || panic))	// Test how AI does without this line
 		return CLIMB;
 
 	// If tile no breeze/stench, adjacent tiles are safe
@@ -101,7 +101,7 @@ Agent::Action MyAI::getAction
 		has_gold = true;
 		return GRAB;
 	}
-	if (has_gold) {
+	if (has_gold || panic) {
 		make_path(make_pair(0,0));
 	} 
 	else {
