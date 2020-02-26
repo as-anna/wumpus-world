@@ -1,0 +1,13 @@
+TODO: 
+x work on move functions (turning, moving, anything with moving in general)
+x fixed face_direction function
+x fixed whole world being marked as p_wumpus or safe
+x fixed world being a vector 
+- make_path might not be working correctly, kept pushing tile (0,0) for me but that might be different now since
+fixing face_direction function
+- might still be segfaulting when bumping into a wall, havent tested that out yet due to face_direction being 
+fixed and agent doesn't go in a straight line anymore. Must have to do with MAX_X and MAX_Y not being changed correctly?
+- implement a panic function 
+	> backtracking all the way to beginning and climb if there are no other safe spaces
+      (pit and gold are in same spot)
+- When you encounter 2 stinks, should be able to tell where Wumpus is for sure

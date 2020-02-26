@@ -43,33 +43,24 @@ Agent::Action MyAI::getAction
 	// YOUR CODE BEGINS
 	// ======================================================================
 	// Mark current tile safe
-	cout << "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN" << endl;
 	if (bump) {
-		cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa" << endl;
-		/*
 		cout << "CURR DIRECTION AT THE BUMP THING!!!!!!!!!!!!" << curr_dir << endl;
 		if (curr_dir == NORTH) {
 			curr_position.second = curr_position.second - 1;
 			MAX_Y = curr_position.second+1;
-			world.tiles.resize(MAX_Y);
+			for (int i = 0; i < world.tiles.size(); ++i)
+			{
+				world.tiles[i].resize(MAX_Y);
+			}
 			cout << "DOOOOOOOOOOOOOOOOOOOOOOOOOOT" << endl;
 			print_world();
 		}
 		else if (curr_dir == EAST) {
 			curr_position.first = curr_position.first - 1;
 			MAX_X = curr_position.first+1;
-			for (int i = 0; i < MAX_Y; ++i)
-			{
-				world.tiles[i].resize(MAX_X);
-			}
+			world.tiles.resize(MAX_X);
 			cout << "ASSSSSSSSSSSSSSS" << endl;
 			print_world();
-		}
-		for (int i = 0; i < world.tiles.size(); i++) {
-			for (int k = 0;; j < world.tiles[i].size(); j++) {
-				cout < ".\t";
-			}
-			cout << endl;
 		}
 
 		else if (curr_dir == WEST)
@@ -77,7 +68,12 @@ Agent::Action MyAI::getAction
 		else if (curr_dir == SOUTH)
 			curr_position.second = curr_position.second + 1; 
 		cout << "CURR POSITION AFTER BUMP X: " << curr_position.first << ", Y: " << curr_position.second<< endl;
-		*/
+		for (int i = 0; i < world.tiles.size(); i++) {
+			for (int j = 0; j < world.tiles[i].size(); j++) {
+				cout < ".\t";
+			}
+			cout << endl;
+		}
 	}
 	
 	cout << "CURR POS X: " << curr_position.first << " Y: " << curr_position.second << endl;
