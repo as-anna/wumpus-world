@@ -19,6 +19,8 @@
 
 #include "MyAI.hpp"
 
+bool DEBUG = false; 
+
 MyAI::MyAI() : Agent()
 {
 	// ======================================================================
@@ -44,7 +46,6 @@ Agent::Action MyAI::getAction
 	// ======================================================================
 	// Mark current tile safe
 	if (bump) {
-		cout << "CURR DIRECTION AT THE BUMP THING!!!!!!!!!!!!" << curr_dir << endl;
 		if (curr_dir == NORTH) {
 			curr_position.second = curr_position.second - 1;
 			MAX_Y = curr_position.second+1;
@@ -52,31 +53,19 @@ Agent::Action MyAI::getAction
 			{
 				world.tiles[i].resize(MAX_Y);
 			}
-			cout << "DOOOOOOOOOOOOOOOOOOOOOOOOOOT" << endl;
-			print_world();
 		}
 		else if (curr_dir == EAST) {
 			curr_position.first = curr_position.first - 1;
 			MAX_X = curr_position.first+1;
 			world.tiles.resize(MAX_X);
-			cout << "ASSSSSSSSSSSSSSS" << endl;
-			print_world();
 		}
 
 		else if (curr_dir == WEST)
 			curr_position.first = curr_position.first + 1;
 		else if (curr_dir == SOUTH)
 			curr_position.second = curr_position.second + 1; 
-		cout << "CURR POSITION AFTER BUMP X: " << curr_position.first << ", Y: " << curr_position.second<< endl;
-		for (int i = 0; i < world.tiles.size(); i++) {
-			for (int j = 0; j < world.tiles[i].size(); j++) {
-				cout < ".\t";
-			}
-			cout << endl;
-		}
 	}
 	
-	cout << "CURR POS X: " << curr_position.first << " Y: " << curr_position.second << endl;
 	world.tiles[curr_position.first][curr_position.second].safe = true;
 	world.tiles[curr_position.first][curr_position.second].visited = true;
 	world.tiles[curr_position.first][curr_position.second].discovered = true;
@@ -112,7 +101,8 @@ Agent::Action MyAI::getAction
 	}
 
 	scan();
-	print_world();
+	if (DEBUG)
+		print_world();
 
 	if ( glitter ) {
 		has_gold = true;
@@ -335,7 +325,8 @@ pair<int, int> MyAI::find_closest_tile() {
 		panic = true;
 	}
 
-	cout << "CLOSEST TILE X: " << closest_tile.first << ", Y: " << closest_tile.second << endl;
+	if (DEBUG)
+		cout << "CLOSEST TILE X: " << closest_tile.first << ", Y: " << closest_tile.second << endl;
 
 	return closest_tile;
 }
@@ -348,7 +339,8 @@ void MyAI::make_path(pair<int, int> desired_tile) {		//NOTE: it isn't changing d
 			((*tile).first == desired_tile.first - 1 && (*tile).second == desired_tile.second) ||
 			((*tile).second == desired_tile.second + 1 && (*tile).first == desired_tile.first) ||
 			((*tile).second == desired_tile.second - 1 && (*tile).first == desired_tile.first)) {
-				cout << "tile pushed back: " << (*tile).first << ", " << (*tile).second << endl; 
+				if (DEBUG)
+					cout << "tile pushed back: " << (*tile).first << ", " << (*tile).second << endl; 
 				desired_path.push_back(*tile);
 				break;
 			}
@@ -379,7 +371,8 @@ void MyAI::set_direction() {
 		tile_to_move_to = desired_path[0];
 	}
 	
-	cout << "TILE TO MOVE TO: " << tile_to_move_to.first << ", " << tile_to_move_to.second << endl;
+	if (DEBUG)
+		cout << "TILE TO MOVE TO: " << tile_to_move_to.first << ", " << tile_to_move_to.second << endl;
 
 	if (current_tile.first+1 == tile_to_move_to.first)
 	{
@@ -400,8 +393,10 @@ void MyAI::set_direction() {
 }
 
 Agent::Action MyAI::face_direction() {
-	cout << "prev Desired dir: " << desired_dir << endl;
-	cout << "prev Current dir: " << curr_dir << endl;
+	if (DEBUG) {
+		cout << "prev Desired dir: " << desired_dir << endl;
+		cout << "prev Current dir: " << curr_dir << endl;
+	}
 	
 	Agent::Action action;
 	if (desired_dir == WEST && curr_dir != WEST)
@@ -426,21 +421,23 @@ Agent::Action MyAI::face_direction() {
 		else if (curr_dir == NORTH) {
 			curr_position.second = curr_position.second + 1;
 		}
-		cout << "AFTER curr pos " << curr_position.first << curr_position.second << endl;
+		if (DEBUG)
+			cout << "AFTER curr pos " << curr_position.first << curr_position.second << endl;
 		action =  FORWARD;
 	}
+	if (DEBUG) {
+		cout << "after Desired dir: " << desired_dir << endl;
+		cout << "after Current dir: " << curr_dir << endl;
 
-	cout << "after Desired dir: " << desired_dir << endl;
-	cout << "after Current dir: " << curr_dir << endl;
+		cout << "PREV_TILES PATH:" << endl;
+		for (auto x: prev_tiles) {
+			cout << "X: " << x.first << ", Y: " << x.second << endl;
+		}
 
-	cout << "PREV_TILES PATH:" << endl;
-	for (auto x: prev_tiles) {
-		cout << "X: " << x.first << ", Y: " << x.second << endl;
-	}
-
-	cout << "DESIRED PATH:" << endl;
-	for (auto x: desired_path) {
-		cout << "X: " << x.first << ", Y: " << x.second << endl;
+		cout << "DESIRED PATH:" << endl;
+		for (auto x: desired_path) {
+			cout << "X: " << x.first << ", Y: " << x.second << endl;
+		}
 	}
 	
 	return action;
