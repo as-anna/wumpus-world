@@ -17,6 +17,8 @@
 //                be lost when the tournament runs your code.
 // ======================================================================
 
+//TEAM NAME: Poputepipikku
+
 #ifndef MYAI_LOCK
 #define MYAI_LOCK
 
