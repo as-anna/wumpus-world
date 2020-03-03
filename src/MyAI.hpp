@@ -78,7 +78,7 @@ private:
 	bool panic = false;
 	
 
-	pair<int,int> wumpus_tile = NULL;
+	pair<int,int> wumpus_tile = make_pair(0,0);
 	vector<pair<int,int>> prev_tiles; 
 	vector<pair<int, int>> desired_path;
 	pair<int, int> curr_position;

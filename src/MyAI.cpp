@@ -19,7 +19,7 @@
 
 #include "MyAI.hpp"
 
-bool DEBUG = true; 
+bool DEBUG = false; 
 
 MyAI::MyAI() : Agent()
 {
@@ -45,7 +45,6 @@ Agent::Action MyAI::getAction
 	// YOUR CODE BEGINS
 	// ======================================================================
 	// if don't have gold yet after exhausting all safe spots and haven't killed wumpus, kill wumpus 
-
 	if (scream) {
 		world.tiles[wumpus_tile.first][wumpus_tile.second].safe = true;
 		world.tiles[wumpus_tile.first][wumpus_tile.second].wumpus = false;
@@ -54,16 +53,16 @@ Agent::Action MyAI::getAction
 		killed_wumpus = true;
 	}
 
-	if (panic && !killed_wumpus) {
-		if ((curr_position.first + 1 == wumpus_tile.first && curr_position.second == wumpus_tile.second && curr_dir == WEST)
-		|| (curr_position.first - 1 == wumpus_tile.first && curr_position.second == wumpus_tile.second && curr_dir == EAST)
-		|| (curr_position.first == wumpus_tile.first && curr_position.second + 1 == wumpus_tile.second && curr_dir == SOUTH)
-	 	|| (curr_position.first == wumpus_tile.first && curr_position.second - 1 == wumpus_tile.second && curr_dir == NORTH)) {
-			return SHOOT
+	if (panic && !killed_wumpus && wumpus_tile.first != 0 && wumpus_tile.second != 0) {
+		if ((curr_position.first + 1 == wumpus_tile.first && curr_position.second == wumpus_tile.second && curr_dir == EAST)
+		|| (curr_position.first - 1 == wumpus_tile.first && curr_position.second == wumpus_tile.second && curr_dir == WEST)
+		|| (curr_position.first == wumpus_tile.first && curr_position.second + 1 == wumpus_tile.second && curr_dir == NORTH)
+	 	|| (curr_position.first == wumpus_tile.first && curr_position.second - 1 == wumpus_tile.second && curr_dir == SOUTH)) {
+			return SHOOT;
 		}
 		make_path(wumpus_tile);
 		set_direction(); 
-		return face_direction;
+		return face_direction();
 	}
 
 	if (bump) {
@@ -130,9 +129,7 @@ Agent::Action MyAI::getAction
 		return GRAB;
 	}
 
-	
-	
-	if (has_gold || panic || killed_wumpus) {
+	if (has_gold || panic) {
 		make_path(make_pair(0,0));
 	} 
 	else {
