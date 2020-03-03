@@ -74,9 +74,11 @@ private:
 	} world;
 
 	bool has_gold = false;
+	bool killed_wumpus = false;
 	bool panic = false;
 	
-	int backtrack;
+
+	pair<int,int> wumpus_tile = NULL;
 	vector<pair<int,int>> prev_tiles; 
 	vector<pair<int, int>> desired_path;
 	pair<int, int> curr_position;

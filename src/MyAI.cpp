@@ -19,7 +19,7 @@
 
 #include "MyAI.hpp"
 
-bool DEBUG = false; 
+bool DEBUG = true; 
 
 MyAI::MyAI() : Agent()
 {
@@ -44,7 +44,28 @@ Agent::Action MyAI::getAction
 	// ======================================================================
 	// YOUR CODE BEGINS
 	// ======================================================================
-	// Mark current tile safe
+	// if don't have gold yet after exhausting all safe spots and haven't killed wumpus, kill wumpus 
+
+	if (scream) {
+		world.tiles[wumpus_tile.first][wumpus_tile.second].safe = true;
+		world.tiles[wumpus_tile.first][wumpus_tile.second].wumpus = false;
+		world.tiles[wumpus_tile.first][wumpus_tile.second].p_wumpus = false;
+		panic = false; 
+		killed_wumpus = true;
+	}
+
+	if (panic && !killed_wumpus) {
+		if ((curr_position.first + 1 == wumpus_tile.first && curr_position.second == wumpus_tile.second && curr_dir == WEST)
+		|| (curr_position.first - 1 == wumpus_tile.first && curr_position.second == wumpus_tile.second && curr_dir == EAST)
+		|| (curr_position.first == wumpus_tile.first && curr_position.second + 1 == wumpus_tile.second && curr_dir == SOUTH)
+	 	|| (curr_position.first == wumpus_tile.first && curr_position.second - 1 == wumpus_tile.second && curr_dir == NORTH)) {
+			return SHOOT
+		}
+		make_path(wumpus_tile);
+		set_direction(); 
+		return face_direction;
+	}
+
 	if (bump) {
 		if (curr_dir == NORTH) {
 			curr_position.second = curr_position.second - 1;
@@ -108,7 +129,10 @@ Agent::Action MyAI::getAction
 		has_gold = true;
 		return GRAB;
 	}
-	if (has_gold || panic) {
+
+	
+	
+	if (has_gold || panic || killed_wumpus) {
 		make_path(make_pair(0,0));
 	} 
 	else {
@@ -301,9 +325,11 @@ void MyAI::scan() {
 	if (pw_count == 1) {
 		world.tiles[p_wumpus_coords.first][p_wumpus_coords.second].wumpus = true;
 		world.tiles[p_wumpus_coords.first][p_wumpus_coords.second].safe = false;
+		wumpus_tile = p_wumpus_coords;
 	}
 }
 
+// PATH FINDING CODE 
 // Finds closest safe tile that is yet to be visited
 pair<int, int> MyAI::find_closest_tile() {
 	int minimum = 100; 
@@ -359,6 +385,7 @@ void MyAI::make_path(pair<int, int> desired_tile) {		//NOTE: it isn't changing d
 	desired_path.push_back(desired_tile);
 }
 
+// MOVEMENT CODE 
 void MyAI::set_direction() {
 	pair<int, int> current_tile;
 	pair<int, int> tile_to_move_to;
