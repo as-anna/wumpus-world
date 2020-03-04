@@ -346,6 +346,7 @@ pair<int, int> MyAI::find_closest_tile() {
 		}
 	}
 
+	cout << "CLOSEST TILE: " << closest_tile.first << " , " << closest_tile.second << endl;
 	// If no more non-visited safe tiles, have run out of options so panic
 	if (closest_tile.first == 0 && closest_tile.second == 0) {
 		panic = true;
@@ -360,26 +361,41 @@ pair<int, int> MyAI::find_closest_tile() {
 // Finds path to desired tile from current position
 void MyAI::make_path(pair<int, int> desired_tile) {		//NOTE: it isn't changing desired path??? 
 	int minimum = 100;
-	if (curr_position.first+1 < MAX_X && world.tiles[curr_position.first + 1][curr_position.second].safe && prev_tiles.back() != make_pair(curr_position.first+1, cur_position.second)) {
-		int distance = abs(curr_position.first+1 - desired_tile.first) + abs(curr_position.second - desired_tile.first)
-		if (minimum > distance)
-			desired_path[0] = make_pair(curr_position.first+1, curr_position.second);
+	if (curr_position.first+1 < MAX_X && world.tiles[curr_position.first + 1][curr_position.second].safe && prev_tiles.back() != make_pair(curr_position.first+1, curr_position.second)) {
+		int distance = abs(curr_position.first+1 - desired_tile.first) + abs(curr_position.second - desired_tile.second);
+		if (minimum > distance) {
+			minimum = distance;
+			desired_path.clear();
+			desired_path.push_back(make_pair(curr_position.first+1, curr_position.second));
+		}
 	}
-	if (curr_position.first-1 > 0 && world.tiles[curr_position.first -1][curr_position.second].safe && prev_tiles.back() != make_pair(curr_position.first-1, cur_position.second)) {
-		int distance = abs(curr_position.first-1 - desired_tile.first) + abs(curr_position.second - desired_tile.first)
-		if (minimum > distance)
-			desired_path[0] = make_pair(curr_position.first-1, curr_position.second);
+	if (curr_position.first-1 > 0 && world.tiles[curr_position.first -1][curr_position.second].safe && prev_tiles.back() != make_pair(curr_position.first-1, curr_position.second)) {
+		int distance = abs(curr_position.first-1 - desired_tile.first) + abs(curr_position.second - desired_tile.second);
+		if (minimum > distance) {
+			minimum = distance;
+			desired_path.clear();
+			desired_path.push_back(make_pair(curr_position.first-1, curr_position.second));
+		}
 	}
-	if (curr_position.second+1 < MAX_Y && world.tiles[curr_position.first][curr_position.second+1].safe && prev_tiles.back() != make_pair(curr_position.first, cur_position.second+1)) {
-		int distance = abs(curr_position.first - desired_tile.first) + abs(curr_position.second+1 - desired_tile.first)
-		if (minimum > distance)
-			desired_path[0] = make_pair(curr_position.first, curr_position.second+1);
+	if (curr_position.second+1 < MAX_Y && world.tiles[curr_position.first][curr_position.second+1].safe && prev_tiles.back() != make_pair(curr_position.first, curr_position.second+1)) {
+		int distance = abs(curr_position.first - desired_tile.first) + abs(curr_position.second+1 - desired_tile.second);
+		if (minimum > distance) {
+			minimum = distance;
+			desired_path.clear();
+			desired_path.push_back(make_pair(curr_position.first, curr_position.second+1));
+		}
 	}
-	if (curr_position.second-1 > 0 && world.tiles[curr_position.first][curr_position.second-1].safe && prev_tiles.back() != make_pair(curr_position.first, cur_position.second-1)) {
-		int distance = abs(curr_position.first - desired_tile.first) + abs(curr_position.second-1 - desired_tile.first)
-		if (minimum > distance)
-			desired_path[0] = make_pair(curr_position.first, curr_position.second-1);
+	if (curr_position.second-1 > 0 && world.tiles[curr_position.first][curr_position.second-1].safe && prev_tiles.back() != make_pair(curr_position.first, curr_position.second-1)) {
+		int distance = abs(curr_position.first - desired_tile.first) + abs(curr_position.second-1 - desired_tile.second);
+		if (minimum > distance) {
+			minimum = distance;
+			desired_path.clear();
+			desired_path.push_back(make_pair(curr_position.first, curr_position.second-1));
+		}
 	}
+
+	//desired_path.push_back(desired_tile);
+
 	// desired_path.clear();
 	// for (auto tile = prev_tiles.rbegin(); tile != prev_tiles.rend(); ++tile) {
 	// 	if (((*tile).first == desired_tile.first + 1 && (*tile).second == desired_tile.second) || 
@@ -410,6 +426,7 @@ void MyAI::make_path(pair<int, int> desired_tile) {		//NOTE: it isn't changing d
 void MyAI::set_direction() {
 	pair<int, int> current_tile;
 	pair<int, int> tile_to_move_to;
+	/*
 	if (curr_position == desired_path[0]) {
 		current_tile = desired_path[0];
 		desired_path.erase(desired_path.begin());
@@ -418,6 +435,8 @@ void MyAI::set_direction() {
 	else {
 		tile_to_move_to = desired_path[0];
 	}
+	*/
+	tile_to_move_to = desired_path.front();
 	
 	if (DEBUG)
 		cout << "TILE TO MOVE TO: " << tile_to_move_to.first << ", " << tile_to_move_to.second << endl;
