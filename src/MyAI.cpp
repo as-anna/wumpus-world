@@ -19,7 +19,7 @@
 
 #include "MyAI.hpp"
 
-bool DEBUG = false; 
+bool DEBUG = true; 
 
 MyAI::MyAI() : Agent()
 {
@@ -45,25 +45,26 @@ Agent::Action MyAI::getAction
 	// YOUR CODE BEGINS
 	// ======================================================================
 	// if don't have gold yet after exhausting all safe spots and haven't killed wumpus, kill wumpus 
-	if (scream) {
-		world.tiles[wumpus_tile.first][wumpus_tile.second].safe = true;
-		world.tiles[wumpus_tile.first][wumpus_tile.second].wumpus = false;
-		world.tiles[wumpus_tile.first][wumpus_tile.second].p_wumpus = false;
-		panic = false; 
-		killed_wumpus = true;
-	}
 
-	if (panic && !killed_wumpus && wumpus_tile.first != 0 && wumpus_tile.second != 0) {
-		if ((curr_position.first + 1 == wumpus_tile.first && curr_position.second == wumpus_tile.second && curr_dir == EAST)
-		|| (curr_position.first - 1 == wumpus_tile.first && curr_position.second == wumpus_tile.second && curr_dir == WEST)
-		|| (curr_position.first == wumpus_tile.first && curr_position.second + 1 == wumpus_tile.second && curr_dir == NORTH)
-	 	|| (curr_position.first == wumpus_tile.first && curr_position.second - 1 == wumpus_tile.second && curr_dir == SOUTH)) {
-			return SHOOT;
-		}
-		make_path(wumpus_tile);
-		set_direction(); 
-		return face_direction();
-	}
+	// if (scream) {
+	// 	world.tiles[wumpus_tile.first][wumpus_tile.second].safe = true;
+	// 	world.tiles[wumpus_tile.first][wumpus_tile.second].wumpus = false;
+	// 	world.tiles[wumpus_tile.first][wumpus_tile.second].p_wumpus = false;
+	// 	panic = false; 
+	// 	killed_wumpus = true;
+	// }
+
+	// if (panic && !killed_wumpus) {
+	// 	if ((curr_position.first + 1 == wumpus_tile.first && curr_position.second == wumpus_tile.second && curr_dir == EAST)
+	// 	|| (curr_position.first - 1 == wumpus_tile.first && curr_position.second == wumpus_tile.second && curr_dir == WEST)
+	// 	|| (curr_position.first == wumpus_tile.first && curr_position.second + 1 == wumpus_tile.second && curr_dir == SOUTH)
+	//  	|| (curr_position.first == wumpus_tile.first && curr_position.second - 1 == wumpus_tile.second && curr_dir == NORTH)) {
+	// 		return SHOOT
+	// 	}
+	// 	make_path(wumpus_tile);
+	// 	set_direction(); 
+	// 	return face_direction;
+	// }
 
 	if (bump) {
 		if (curr_dir == NORTH) {
@@ -129,7 +130,9 @@ Agent::Action MyAI::getAction
 		return GRAB;
 	}
 
-	if (has_gold || panic) {
+	
+	
+	if (has_gold || panic || killed_wumpus) {
 		make_path(make_pair(0,0));
 	} 
 	else {
@@ -356,30 +359,51 @@ pair<int, int> MyAI::find_closest_tile() {
 
 // Finds path to desired tile from current position
 void MyAI::make_path(pair<int, int> desired_tile) {		//NOTE: it isn't changing desired path??? 
-	desired_path.clear();
-	for (auto tile = prev_tiles.rbegin(); tile != prev_tiles.rend(); ++tile) {
-		if (((*tile).first == desired_tile.first + 1 && (*tile).second == desired_tile.second) || 
-			((*tile).first == desired_tile.first - 1 && (*tile).second == desired_tile.second) ||
-			((*tile).second == desired_tile.second + 1 && (*tile).first == desired_tile.first) ||
-			((*tile).second == desired_tile.second - 1 && (*tile).first == desired_tile.first)) {
-				if (DEBUG)
-					cout << "tile pushed back: " << (*tile).first << ", " << (*tile).second << endl; 
-				desired_path.push_back(*tile);
-				break;
-			}
-		else {
-			// if tile is not found, find() return the end of the vector
-			std::vector<pair<int,int>>::iterator it = find(desired_path.begin(), desired_path.end(), *tile);
-			if (it == desired_path.end()) 
-				desired_path.push_back(*tile);
-			else {
-				int new_size = it - desired_path.begin() + 1;
-				desired_path.resize(new_size);
-			}
-		}
+	int minimum = 100;
+	if (curr_position.first+1 < MAX_X && world.tiles[curr_position.first + 1][curr_position.second].safe && prev_tiles.back() != make_pair(curr_position.first+1, cur_position.second)) {
+		int distance = abs(curr_position.first+1 - desired_tile.first) + abs(curr_position.second - desired_tile.first)
+		if (minimum > distance)
+			desired_path[0] = make_pair(curr_position.first+1, curr_position.second);
 	}
+	if (curr_position.first-1 > 0 && world.tiles[curr_position.first -1][curr_position.second].safe && prev_tiles.back() != make_pair(curr_position.first-1, cur_position.second)) {
+		int distance = abs(curr_position.first-1 - desired_tile.first) + abs(curr_position.second - desired_tile.first)
+		if (minimum > distance)
+			desired_path[0] = make_pair(curr_position.first-1, curr_position.second);
+	}
+	if (curr_position.second+1 < MAX_Y && world.tiles[curr_position.first][curr_position.second+1].safe && prev_tiles.back() != make_pair(curr_position.first, cur_position.second+1)) {
+		int distance = abs(curr_position.first - desired_tile.first) + abs(curr_position.second+1 - desired_tile.first)
+		if (minimum > distance)
+			desired_path[0] = make_pair(curr_position.first, curr_position.second+1);
+	}
+	if (curr_position.second-1 > 0 && world.tiles[curr_position.first][curr_position.second-1].safe && prev_tiles.back() != make_pair(curr_position.first, cur_position.second-1)) {
+		int distance = abs(curr_position.first - desired_tile.first) + abs(curr_position.second-1 - desired_tile.first)
+		if (minimum > distance)
+			desired_path[0] = make_pair(curr_position.first, curr_position.second-1);
+	}
+	// desired_path.clear();
+	// for (auto tile = prev_tiles.rbegin(); tile != prev_tiles.rend(); ++tile) {
+	// 	if (((*tile).first == desired_tile.first + 1 && (*tile).second == desired_tile.second) || 
+	// 		((*tile).first == desired_tile.first - 1 && (*tile).second == desired_tile.second) ||
+	// 		((*tile).second == desired_tile.second + 1 && (*tile).first == desired_tile.first) ||
+	// 		((*tile).second == desired_tile.second - 1 && (*tile).first == desired_tile.first)) {
+	// 			if (DEBUG)
+	// 				cout << "tile pushed back: " << (*tile).first << ", " << (*tile).second << endl; 
+	// 			desired_path.push_back(*tile);
+	// 			break;
+	// 		}
+	// 	else {
+	// 		// if tile is not found, find() return the end of the vector
+	// 		std::vector<pair<int,int>>::iterator it = find(desired_path.begin(), desired_path.end(), *tile);
+	// 		if (it == desired_path.end()) 
+	// 			desired_path.push_back(*tile);
+	// 		else {
+	// 			int new_size = it - desired_path.begin() + 1;
+	// 			desired_path.resize(new_size);
+	// 		}
+	// 	}
+	// }
 
-	desired_path.push_back(desired_tile);
+	// desired_path.push_back(desired_tile);
 }
 
 // MOVEMENT CODE 
@@ -432,7 +456,7 @@ Agent::Action MyAI::face_direction() {
 	else if (desired_dir == NORTH && curr_dir != NORTH)
 		action = face_north();
 
-	else {	// chayanne: i cant believe-
+	else {
 		if (curr_dir == WEST) {
 			curr_position.first = curr_position.first - 1;
 		}
@@ -523,6 +547,7 @@ Agent::Action MyAI::face_north() {
 			return TURN_LEFT;
 	}
 }
+
 
 void MyAI::print_world() {
 	for (int y = MAX_Y - 1; y >= 0 ; --y) {
