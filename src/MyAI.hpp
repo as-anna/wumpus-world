@@ -63,6 +63,7 @@ private:
 		bool p_pit = false;
 		bool p_wumpus = false;
 		bool is_breeze = false;
+		bool is_stench = false;
 		bool visited = false;
 	};
 
@@ -76,6 +77,8 @@ private:
 	bool has_gold = false;
 	bool killed_wumpus = false;
 	bool panic = false;
+	int move_count = 0;
+	float wumpus_gold_chance = -1;
 	
 
 	pair<int,int> wumpus_tile = make_pair(0,0);
@@ -102,6 +105,7 @@ private:
 	Agent::Action face_east();
 	Agent::Action face_north();
 	Agent::Action face_south();
+	bool is_adjacent(pair<int, int> tile1, pair<int, int> tile2);
 	void print_world();
 
 	// Check if there still exists a safe tile that has yet to be visited

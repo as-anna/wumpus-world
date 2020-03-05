@@ -19,7 +19,7 @@
 
 #include "MyAI.hpp"
 
-bool DEBUG = true; 
+bool DEBUG = false; 
 
 MyAI::MyAI() : Agent()
 {
@@ -44,27 +44,22 @@ Agent::Action MyAI::getAction
 	// ======================================================================
 	// YOUR CODE BEGINS
 	// ======================================================================
+	move_count++;
+
 	// if don't have gold yet after exhausting all safe spots and haven't killed wumpus, kill wumpus 
+	if (scream) {
+		if (!world.tiles[wumpus_tile.first][wumpus_tile.second].pit)
+			world.tiles[wumpus_tile.first][wumpus_tile.second].safe = true;
+		world.tiles[wumpus_tile.first][wumpus_tile.second].wumpus = false;
+		world.tiles[wumpus_tile.first][wumpus_tile.second].p_wumpus = false;
+		panic = false; 
+		killed_wumpus = true;
+	}
 
-	// if (scream) {
-	// 	world.tiles[wumpus_tile.first][wumpus_tile.second].safe = true;
-	// 	world.tiles[wumpus_tile.first][wumpus_tile.second].wumpus = false;
-	// 	world.tiles[wumpus_tile.first][wumpus_tile.second].p_wumpus = false;
-	// 	panic = false; 
-	// 	killed_wumpus = true;
-	// }
-
-	// if (panic && !killed_wumpus) {
-	// 	if ((curr_position.first + 1 == wumpus_tile.first && curr_position.second == wumpus_tile.second && curr_dir == EAST)
-	// 	|| (curr_position.first - 1 == wumpus_tile.first && curr_position.second == wumpus_tile.second && curr_dir == WEST)
-	// 	|| (curr_position.first == wumpus_tile.first && curr_position.second + 1 == wumpus_tile.second && curr_dir == SOUTH)
-	//  	|| (curr_position.first == wumpus_tile.first && curr_position.second - 1 == wumpus_tile.second && curr_dir == NORTH)) {
-	// 		return SHOOT
-	// 	}
-	// 	make_path(wumpus_tile);
-	// 	set_direction(); 
-	// 	return face_direction;
-	// }
+	if ( glitter ) {
+		has_gold = true;
+		return GRAB;
+	}
 
 	if (bump) {
 		if (curr_dir == NORTH) {
@@ -96,17 +91,51 @@ Agent::Action MyAI::getAction
 		|| prev_tiles.back().second != curr_position.second)
 		prev_tiles.push_back(curr_position);
 	
-	
+
 	// Probability that will fall into a pit right away at spawn if breeze too high so climb
-	if (curr_position.first == 0 && curr_position.second == 0 && (breeze || stench || has_gold || panic))	// Test how AI does without this line
+	if (curr_position.first == 0 && curr_position.second == 0 && (breeze || stench || has_gold || panic || move_count > 200))	// Test how AI does without this line
 		return CLIMB;
+
+	if (panic && !killed_wumpus && wumpus_tile.first != 0 && wumpus_tile.second != 0 && !has_gold && move_count <= 200) {
+		if (wumpus_gold_chance == -1) {
+			float unvisited_total = 0;
+			for (int x = 0; x < MAX_X; x++) {
+				for (int y = 0; y < MAX_Y; y++) {
+					if (world.tiles[x][y].visited == false)
+						unvisited_total++;
+				}
+			}
+			float one = 1.0;
+			wumpus_gold_chance = one/unvisited_total;
+			//cout << wumpus_gold_chance;
+		}
+
+		// if low chance then just give up and climb
+		if (wumpus_gold_chance < 0.30) {
+			make_path(make_pair(0, 0));
+			set_direction();
+			return face_direction();
+		}
+
+		if ((curr_position.first + 1 == wumpus_tile.first && curr_position.second == wumpus_tile.second && curr_dir == EAST)
+		|| (curr_position.first - 1 == wumpus_tile.first && curr_position.second == wumpus_tile.second && curr_dir == WEST)
+		|| (curr_position.first == wumpus_tile.first && curr_position.second + 1 == wumpus_tile.second && curr_dir == NORTH)
+	 	|| (curr_position.first == wumpus_tile.first && curr_position.second - 1 == wumpus_tile.second && curr_dir == SOUTH)) {
+			return SHOOT;
+		}
+		make_path(wumpus_tile);
+		set_direction(); 
+		return face_direction();
+	}
+
+
 
 	// If tile no breeze/stench, adjacent tiles are safe
 	if (!stench && !breeze) {
 		mark_safe();
 	}
 	else {
-		if (stench) {
+		if (stench && wumpus_tile.first == 0 && wumpus_tile.second == 0) {
 			mark_p_wumpus();
 		}
 		else if (!stench) {
@@ -125,14 +154,7 @@ Agent::Action MyAI::getAction
 	if (DEBUG)
 		print_world();
 
-	if ( glitter ) {
-		has_gold = true;
-		return GRAB;
-	}
-
-	
-	
-	if (has_gold || panic || killed_wumpus) {
+	if (has_gold || panic || move_count > 200) {
 		make_path(make_pair(0,0));
 	} 
 	else {
@@ -194,6 +216,7 @@ void MyAI::mark_safe() {
 }
 
 void MyAI::mark_p_wumpus() {
+	world.tiles[curr_position.first][curr_position.second].is_stench = true;
 	if (curr_position.first > 0 && world.tiles[curr_position.first-1][curr_position.second].discovered == false) {
 		world.tiles[curr_position.first-1][curr_position.second].p_wumpus = true;
 		world.tiles[curr_position.first-1][curr_position.second].safe = false;
@@ -279,6 +302,8 @@ void MyAI::remove_p_pit() {
 void MyAI::scan() {
 	int pw_count = 0;
 	int pp_count;
+	int s_count = 0;
+	vector<pair<int, int>> s_pairs;
 	pair <int, int> p_wumpus_coords;
 	pair <int, int> p_pit_coords;
 	for (int x = 0; x < MAX_X; x++) {
@@ -315,7 +340,13 @@ void MyAI::scan() {
 				pw_count++;
 				p_wumpus_coords = make_pair(x, y);
 			}
-		}
+			if (world.tiles[x][y].is_stench) {
+				s_count++;
+				s_pairs.push_back(make_pair(x, y));
+			}
+			if (world.tiles[x][y].wumpus)
+				world.tiles[x][y].safe = false;
+		} 
 	}
 	if (pp_count == 1) {
 		world.tiles[p_pit_coords.first][p_pit_coords.second].pit = true;
@@ -326,6 +357,27 @@ void MyAI::scan() {
 		world.tiles[p_wumpus_coords.first][p_wumpus_coords.second].wumpus = true;
 		world.tiles[p_wumpus_coords.first][p_wumpus_coords.second].safe = false;
 		wumpus_tile = p_wumpus_coords;
+	}
+	if (s_count >= 2 && wumpus_tile.first == 0 && wumpus_tile.second == 0) {
+		for (int x = 0; x < MAX_X; x++) {
+			for (int y = 0; y < MAX_Y; y++) {
+				if (is_adjacent(make_pair(x, y), s_pairs[0]) && is_adjacent(make_pair(x, y), s_pairs[1])
+					&& world.tiles[x][y].visited == false) {
+					world.tiles[x][y].wumpus = true;
+					world.tiles[x][y].safe = false;
+					wumpus_tile = make_pair(x, y);
+					for (int a = 0; a < MAX_X; a++) {
+						for (int b = 0; b < MAX_Y; b++)	{
+							if (world.tiles[a][b].p_wumpus) {
+								world.tiles[a][b].p_wumpus = false;
+								if (!world.tiles[a][b].p_pit && !world.tiles[a][b].pit && !world.tiles[a][b].wumpus)
+									world.tiles[a][b].safe = true;
+							}
+						}
+					}
+				}
+			}
+		}	
 	}
 }
 
@@ -346,7 +398,6 @@ pair<int, int> MyAI::find_closest_tile() {
 		}
 	}
 
-	cout << "CLOSEST TILE: " << closest_tile.first << " , " << closest_tile.second << endl;
 	// If no more non-visited safe tiles, have run out of options so panic
 	if (closest_tile.first == 0 && closest_tile.second == 0) {
 		panic = true;
@@ -360,73 +411,36 @@ pair<int, int> MyAI::find_closest_tile() {
 
 // Finds path to desired tile from current position
 void MyAI::make_path(pair<int, int> desired_tile) {		//NOTE: it isn't changing desired path??? 
-	int minimum = 100;
-	if (curr_position.first+1 < MAX_X && world.tiles[curr_position.first + 1][curr_position.second].safe && prev_tiles.back() != make_pair(curr_position.first+1, curr_position.second)) {
-		int distance = abs(curr_position.first+1 - desired_tile.first) + abs(curr_position.second - desired_tile.second);
-		if (minimum > distance) {
-			minimum = distance;
-			desired_path.clear();
-			desired_path.push_back(make_pair(curr_position.first+1, curr_position.second));
-		}
-	}
-	if (curr_position.first-1 > 0 && world.tiles[curr_position.first -1][curr_position.second].safe && prev_tiles.back() != make_pair(curr_position.first-1, curr_position.second)) {
-		int distance = abs(curr_position.first-1 - desired_tile.first) + abs(curr_position.second - desired_tile.second);
-		if (minimum > distance) {
-			minimum = distance;
-			desired_path.clear();
-			desired_path.push_back(make_pair(curr_position.first-1, curr_position.second));
-		}
-	}
-	if (curr_position.second+1 < MAX_Y && world.tiles[curr_position.first][curr_position.second+1].safe && prev_tiles.back() != make_pair(curr_position.first, curr_position.second+1)) {
-		int distance = abs(curr_position.first - desired_tile.first) + abs(curr_position.second+1 - desired_tile.second);
-		if (minimum > distance) {
-			minimum = distance;
-			desired_path.clear();
-			desired_path.push_back(make_pair(curr_position.first, curr_position.second+1));
-		}
-	}
-	if (curr_position.second-1 > 0 && world.tiles[curr_position.first][curr_position.second-1].safe && prev_tiles.back() != make_pair(curr_position.first, curr_position.second-1)) {
-		int distance = abs(curr_position.first - desired_tile.first) + abs(curr_position.second-1 - desired_tile.second);
-		if (minimum > distance) {
-			minimum = distance;
-			desired_path.clear();
-			desired_path.push_back(make_pair(curr_position.first, curr_position.second-1));
+	desired_path.clear();
+	for (auto tile = prev_tiles.rbegin(); tile != prev_tiles.rend(); ++tile) {
+		if (((*tile).first == desired_tile.first + 1 && (*tile).second == desired_tile.second) || 
+			((*tile).first == desired_tile.first - 1 && (*tile).second == desired_tile.second) ||
+			((*tile).second == desired_tile.second + 1 && (*tile).first == desired_tile.first) ||
+			((*tile).second == desired_tile.second - 1 && (*tile).first == desired_tile.first)) {
+				if (DEBUG)
+					cout << "tile pushed back: " << (*tile).first << ", " << (*tile).second << endl; 
+				desired_path.push_back(*tile);
+				break;
+			}
+		else {
+			// if tile is not found, find() return the end of the vector
+			std::vector<pair<int,int>>::iterator it = find(desired_path.begin(), desired_path.end(), *tile);
+			if (it == desired_path.end()) 
+				desired_path.push_back(*tile);
+			else {
+				int new_size = it - desired_path.begin() + 1;
+				desired_path.resize(new_size);
+			}
 		}
 	}
 
-	//desired_path.push_back(desired_tile);
-
-	// desired_path.clear();
-	// for (auto tile = prev_tiles.rbegin(); tile != prev_tiles.rend(); ++tile) {
-	// 	if (((*tile).first == desired_tile.first + 1 && (*tile).second == desired_tile.second) || 
-	// 		((*tile).first == desired_tile.first - 1 && (*tile).second == desired_tile.second) ||
-	// 		((*tile).second == desired_tile.second + 1 && (*tile).first == desired_tile.first) ||
-	// 		((*tile).second == desired_tile.second - 1 && (*tile).first == desired_tile.first)) {
-	// 			if (DEBUG)
-	// 				cout << "tile pushed back: " << (*tile).first << ", " << (*tile).second << endl; 
-	// 			desired_path.push_back(*tile);
-	// 			break;
-	// 		}
-	// 	else {
-	// 		// if tile is not found, find() return the end of the vector
-	// 		std::vector<pair<int,int>>::iterator it = find(desired_path.begin(), desired_path.end(), *tile);
-	// 		if (it == desired_path.end()) 
-	// 			desired_path.push_back(*tile);
-	// 		else {
-	// 			int new_size = it - desired_path.begin() + 1;
-	// 			desired_path.resize(new_size);
-	// 		}
-	// 	}
-	// }
-
-	// desired_path.push_back(desired_tile);
+	desired_path.push_back(desired_tile);
 }
 
 // MOVEMENT CODE 
 void MyAI::set_direction() {
 	pair<int, int> current_tile;
 	pair<int, int> tile_to_move_to;
-	/*
 	if (curr_position == desired_path[0]) {
 		current_tile = desired_path[0];
 		desired_path.erase(desired_path.begin());
@@ -435,8 +449,6 @@ void MyAI::set_direction() {
 	else {
 		tile_to_move_to = desired_path[0];
 	}
-	*/
-	tile_to_move_to = desired_path.front();
 	
 	if (DEBUG)
 		cout << "TILE TO MOVE TO: " << tile_to_move_to.first << ", " << tile_to_move_to.second << endl;
@@ -475,7 +487,7 @@ Agent::Action MyAI::face_direction() {
 	else if (desired_dir == NORTH && curr_dir != NORTH)
 		action = face_north();
 
-	else {
+	else {	// chayanne: i cant believe-
 		if (curr_dir == WEST) {
 			curr_position.first = curr_position.first - 1;
 		}
@@ -567,6 +579,15 @@ Agent::Action MyAI::face_north() {
 	}
 }
 
+// tile2 should be one sure in bounds
+bool MyAI::is_adjacent(pair<int, int> tile1, pair<int, int> tile2) {
+	if ((((tile1.first == tile2.first + 1 || tile1.first == tile2.first - 1) && (tile1.second == tile2.second))
+		|| ((tile1.second == tile2.second + 1 || tile1.second == tile2.second - 1) && (tile1.first == tile2.first)))
+		&& tile1.first < MAX_X && tile1.first >= 0 && tile1.second < MAX_Y && tile1.second >= 0)
+		return true;
+	else
+		return false;
+}
 
 void MyAI::print_world() {
 	for (int y = MAX_Y - 1; y >= 0 ; --y) {
@@ -585,6 +606,8 @@ void MyAI::print_world() {
 				cout << "P_W"; 
 			if (world.tiles[x][y].is_breeze) 
 				cout << "B";
+			if (world.tiles[x][y].is_stench)
+				cout << "T"; 
 			if (world.tiles[x][y].visited)
 				cout << "V"; 
 			cout << ".\t\t";
